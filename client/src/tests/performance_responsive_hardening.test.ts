@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 /**
- * PEOPLEPAY360 — PHASE 7.6 FRONTEND PERFORMANCE & RESPONSIVE HARDENING TEST SUITE
+ * HR NEXUS — PHASE 7.6 FRONTEND PERFORMANCE & RESPONSIVE HARDENING TEST SUITE
  * 
  * Validates:
  * 1. Responsive Viewport Matrix (1920px, 1440px, 1366px, 1024px, 768px, 425px, 375px)
@@ -60,7 +60,7 @@ export function getResponsiveLayout(viewportWidth: number) {
   }
 }
 
-test('PEOPLEPAY360 — PHASE 7.6 FRONTEND PERFORMANCE & RESPONSIVE SUITE', async (t) => {
+test('HR NEXUS — PHASE 7.6 FRONTEND PERFORMANCE & RESPONSIVE SUITE', async (t) => {
 
   await t.test('1. Responsive Layout Matrix Across All Standard Viewports', async (st) => {
     await st.test('1.1 Desktop 1920px (Ultra-wide / FHD) displays full expanded 240px sidebar', () => {

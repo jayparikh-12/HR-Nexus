@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Payroll / Payrun API Module
+ * HR Nexus — Payroll / Payrun API Module
  *
  * Centralized typed wrappers for /api/payroll endpoints.
  * Automatically attaches Authorization: Bearer <token> via apiFetch.

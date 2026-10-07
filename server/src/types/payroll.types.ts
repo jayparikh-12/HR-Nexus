@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Normalized Payroll Calculation Contract Types
+ * HR Nexus — Normalized Payroll Calculation Contract Types
  *
  * Defines the clean, strongly typed domain contracts for the deterministic
  * payroll engine. Contains only fields strictly necessary for payroll calculation.

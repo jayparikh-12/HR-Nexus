@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Dedicated Error Pages & Error Architecture Test Suite
+ * HR Nexus — Dedicated Error Pages & Error Architecture Test Suite
  * 
  * Verifies:
  * 1. 401 Unauthorized page metadata and action contract
@@ -30,9 +30,9 @@ import {
 import { isTabAllowed, getDefaultWorkspacePath } from '../utils/routes';
 import type { UserRole } from '../types';
 
-test('PEOPLEPAY360 — DEDICATED ERROR ARCHITECTURE & PAGES SUITE', async (t) => {
+test('HR NEXUS — DEDICATED ERROR ARCHITECTURE & PAGES SUITE', async (t) => {
   console.log('\n================================================================');
-  console.log('🚨 PEOPLEPAY360 — ERROR HANDLING & ERROR PAGES VERIFICATION 🚨');
+  console.log('🚨 HR NEXUS — ERROR HANDLING & ERROR PAGES VERIFICATION 🚨');
   console.log('================================================================\n');
 
   // ── 1. HTTP Error Distinction in API Client ───────────────────────────────

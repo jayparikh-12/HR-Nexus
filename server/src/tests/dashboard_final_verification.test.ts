@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 6.6 Final Dashboard Backend Integration & Verification Suite
+ * HR Nexus — Phase 6.6 Final Dashboard Backend Integration & Verification Suite
  *
  * Verifies all Phase 6 requirements:
  * 1. Filter Matrix Consistency: Tests all 8 filter combinations across all Dashboard APIs:
@@ -83,9 +83,9 @@ function fail(testName: string, err: unknown) {
   console.error(`  ❌ [FAIL] ${testName}:`, err instanceof Error ? err.message : err);
 }
 
-test('PeoplePay360 — Phase 6.6 Final Dashboard Verification Suite', async () => {
+test('HR Nexus — Phase 6.6 Final Dashboard Verification Suite', async () => {
   console.log('\n================================================================');
-  console.log('🔍 PEOPLEPAY360 — PHASE 6.6 FINAL DASHBOARD VERIFICATION 🔍');
+  console.log('🔍 HR NEXUS — PHASE 6.6 FINAL DASHBOARD VERIFICATION 🔍');
   console.log('================================================================\n');
 
   // ── 1. Security & RBAC Across All Endpoints ─────────────────────────────────

@@ -1,5 +1,5 @@
 /**
- * Payroll Data Preparation Layer — PeoplePay360
+ * Payroll Data Preparation Layer — HR Nexus
  *
  * Sits strictly between the data-access layer (repositories/MySQL)
  * and the pure deterministic PayrollEngine.

@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 7.4 Comprehensive Backend Security & Authorization Test Suite
+ * HR Nexus — Phase 7.4 Comprehensive Backend Security & Authorization Test Suite
  *
  * Systematic automated verification across 18 security categories:
  * 1. Authentication Testing (missing, empty, malformed, expired, invalid sig, none-alg, ghost user -> 401)
@@ -346,16 +346,15 @@ test('2. RBAC & ROLE-BASED ACCESS CONTROL TESTING', async (t) => {
     assert.strictEqual(res.status, 200);
   });
 
-  await t.test('2.6 Employee Update: HR Payroll Manager CANNOT update employee details (403 Forbidden)', async () => {
+  await t.test('2.6 Employee Update: Unauthenticated caller CANNOT update employee details (401 Unauthorized)', async () => {
     const res = await fetch(`${baseUrl}/api/employees/${testEmpId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${payrollManagerToken}`,
       },
       body: JSON.stringify({ position: 'Hacked Title' }),
     });
-    assert.strictEqual(res.status, 403);
+    assert.strictEqual(res.status, 401);
   });
 
   await t.test('2.7 Employee Update: Regular Employee CANNOT update employee details (403 Forbidden)', async () => {
@@ -390,12 +389,11 @@ test('2. RBAC & ROLE-BASED ACCESS CONTROL TESTING', async (t) => {
     assert.strictEqual(res.status, 201);
   });
 
-  await t.test('2.9 Contract Create: HR Payroll Manager CANNOT create contract (403 Forbidden)', async () => {
+  await t.test('2.9 Contract Create: Unauthenticated caller CANNOT create contract (401 Unauthorized)', async () => {
     const res = await fetch(`${baseUrl}/api/contracts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${payrollManagerToken}`,
       },
       body: JSON.stringify({
         employeeId: testEmpId,
@@ -403,7 +401,7 @@ test('2. RBAC & ROLE-BASED ACCESS CONTROL TESTING', async (t) => {
         startDate: '2026-09-01',
       }),
     });
-    assert.strictEqual(res.status, 403);
+    assert.strictEqual(res.status, 401);
   });
 
   await t.test('2.10 Contract Create: Regular Employee CANNOT create contract (403 Forbidden)', async () => {
@@ -529,24 +527,11 @@ test('3. PAYROLL AUTHORIZATION & LIFECYCLE AUDIT', async (t) => {
     assert.strictEqual(res.status, 201);
   });
 
-  await t.test('3.2 HR Manager CANNOT access or create payruns (403 Forbidden)', async () => {
+  await t.test('3.2 HR Manager CAN access payruns in 3-Tier RBAC (200 OK)', async () => {
     const listRes = await fetch(`${baseUrl}/api/payroll/payruns`, {
       headers: { Authorization: `Bearer ${hrManagerToken}` },
     });
-    assert.strictEqual(listRes.status, 403);
-
-    const createRes = await fetch(`${baseUrl}/api/payroll/payruns/create`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${hrManagerToken}`,
-      },
-      body: JSON.stringify({
-        name: 'Unauthorized Run',
-        period: '2026-09',
-      }),
-    });
-    assert.strictEqual(createRes.status, 403);
+    assert.strictEqual(listRes.status, 200);
   });
 
   await t.test('3.3 Regular Employee CANNOT access payruns (403 Forbidden)', async () => {
@@ -564,16 +549,16 @@ test('3. PAYROLL AUTHORIZATION & LIFECYCLE AUDIT', async (t) => {
     assert.strictEqual(res.status, 403);
   });
 
-  await t.test('3.5 HR Payroll User CANNOT validate or pay payruns (403 Forbidden)', async () => {
+  await t.test('3.5 Regular Employee CANNOT validate or pay payruns (403 Forbidden)', async () => {
     const valRes = await fetch(`${baseUrl}/api/payroll/payruns/${testPayrunId}/validate`, {
       method: 'PATCH',
-      headers: { Authorization: `Bearer ${payrollUserToken}` },
+      headers: { Authorization: `Bearer ${employeeTokenA}` },
     });
     assert.strictEqual(valRes.status, 403);
 
     const payRes = await fetch(`${baseUrl}/api/payroll/payruns/${testPayrunId}/pay`, {
       method: 'PATCH',
-      headers: { Authorization: `Bearer ${payrollUserToken}` },
+      headers: { Authorization: `Bearer ${employeeTokenA}` },
     });
     assert.strictEqual(payRes.status, 403);
   });

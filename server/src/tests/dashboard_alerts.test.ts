@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 6.4 Dashboard Alerts & Operational Insights Test Suite
+ * HR Nexus — Phase 6.4 Dashboard Alerts & Operational Insights Test Suite
  *
  * Verifies all Phase 6.4 backend requirements:
  * 1. Security: Authentication enforcement (401 on missing/invalid token)
@@ -53,9 +53,9 @@ function createMockReqRes(authHeader?: string, user?: any) {
   return { req: req as Request, res: res as Response, getStatus: () => statusCode, getBody: () => jsonBody };
 }
 
-test('PeoplePay360 — Phase 6.4 Dashboard Alerts & Operational Insights Backend Verification', async () => {
+test('HR Nexus — Phase 6.4 Dashboard Alerts & Operational Insights Backend Verification', async () => {
   console.log('\n================================================================');
-  console.log('🔍 PEOPLEPAY360 — PHASE 6.4 DASHBOARD ALERTS BACKEND VERIFICATION 🔍');
+  console.log('🔍 HR NEXUS — PHASE 6.4 DASHBOARD ALERTS BACKEND VERIFICATION 🔍');
   console.log('================================================================\n');
 
   // ── 1. Security: Authentication Enforcement ────────────────────────────────
@@ -75,7 +75,7 @@ test('PeoplePay360 — Phase 6.4 Dashboard Alerts & Operational Insights Backend
     // Employee role lacks EMPLOYEE_READ permission
     const employeeUser = {
       id: 'emp-123',
-      email: 'employee@peoplepay360.internal',
+      email: 'employee@hrnexus.internal',
       role: 'EMPLOYEE',
       permissions: [PERMISSIONS.PAYSLIP_READ],
     };
@@ -89,7 +89,7 @@ test('PeoplePay360 — Phase 6.4 Dashboard Alerts & Operational Insights Backend
     // Admin role has EMPLOYEE_READ permission
     const adminUser = {
       id: 'admin-1',
-      email: 'admin@peoplepay360.internal',
+      email: 'admin@hrnexus.internal',
       role: 'ADMIN',
       permissions: [PERMISSIONS.EMPLOYEE_READ, PERMISSIONS.PAYRUN_READ],
     };

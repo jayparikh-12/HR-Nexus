@@ -1,5 +1,5 @@
 /**
- * Dashboard Service — Business Logic and Aggregation Coordinator for PeoplePay360.
+ * Dashboard Service — Business Logic and Aggregation Coordinator for HR Nexus.
  *
  * Responsibilities:
  * - Deterministic parsing of period/date filters across different module date semantics.

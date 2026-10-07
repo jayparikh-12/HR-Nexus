@@ -6,12 +6,12 @@
  * unverified states are never written to disk.
  */
 
-const TOKEN_KEY = 'peoplepay360_auth_token';
+const TOKEN_KEY = 'hrnexus_auth_token';
 
 export const authStorage = {
   getToken(): string | null {
     try {
-      return localStorage.getItem(TOKEN_KEY);
+      return localStorage.getItem(TOKEN_KEY) || localStorage.getItem('peoplepay360_auth_token');
     } catch {
       return null;
     }

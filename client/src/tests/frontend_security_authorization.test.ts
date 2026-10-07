@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 7.4 Frontend Security & Authorization Verification Suite
+ * HR Nexus — Phase 7.4 Frontend Security & Authorization Verification Suite
  *
  * Comprehensive audit and automated test suite verifying:
  * 1. Authentication lifecycle (valid/invalid login, missing credentials, logout, refresh, token corruption)
@@ -49,9 +49,9 @@ function createMockJwt(payload: Record<string, any>): string {
   return `${encodedHeader}.${encodedPayload}.${signature}`;
 }
 
-test('PEOPLEPAY360 — PHASE 7.4 FRONTEND SECURITY & AUTHORIZATION AUDIT', async (t) => {
+test('HR NEXUS — PHASE 7.4 FRONTEND SECURITY & AUTHORIZATION AUDIT', async (t) => {
   console.log('\n================================================================');
-  console.log('🛡️  PEOPLEPAY360 — PHASE 7.4 SECURITY & AUTHORIZATION SUITE 🛡️');
+  console.log('🛡️  HR NEXUS — PHASE 7.4 SECURITY & AUTHORIZATION SUITE 🛡️');
   console.log('================================================================\n');
 
   // ── CATEGORY 1: Authentication Testing ──────────────────────────────────────
@@ -61,7 +61,7 @@ test('PEOPLEPAY360 — PHASE 7.4 FRONTEND SECURITY & AUTHORIZATION AUDIT', async
       const now = Math.floor(Date.now() / 1000);
       const token = createMockJwt({
         userId: 'USR-999',
-        email: 'admin@peoplepay360.com',
+        email: 'admin@hrnexus.com',
         role: 'Admin',
         iat: now,
         exp: now + 1200,
@@ -70,7 +70,7 @@ test('PEOPLEPAY360 — PHASE 7.4 FRONTEND SECURITY & AUTHORIZATION AUDIT', async
       const parsed = parseJwtPayload(token);
       assert.ok(parsed, 'JWT must decode safely');
       assert.strictEqual(parsed.userId, 'USR-999');
-      assert.strictEqual(parsed.email, 'admin@peoplepay360.com');
+      assert.strictEqual(parsed.email, 'admin@hrnexus.com');
       assert.strictEqual(parsed.role, 'Admin');
       assert.strictEqual(isTokenExpired(token), false, 'Token with 20m lifetime must not be expired');
     });
@@ -352,7 +352,7 @@ test('PEOPLEPAY360 — PHASE 7.4 FRONTEND SECURITY & AUTHORIZATION AUDIT', async
       const storedUser: ApiUser = {
         id: 'USR-001',
         name: 'Jane Smith',
-        email: 'employee@peoplepay360.com',
+        email: 'employee@hrnexus.com',
         role: 'Employee',
         employeeId: 'EMP-001',
       };
@@ -366,7 +366,7 @@ test('PEOPLEPAY360 — PHASE 7.4 FRONTEND SECURITY & AUTHORIZATION AUDIT', async
     });
 
     await tSub.test('6.2 Error message sanitizer strips database errors, SQL, and stack traces', async () => {
-      const rawDbError = 'ER_DUP_ENTRY: Duplicate entry "admin@peoplepay360.com" for key "users.email" at Query.Sequence';
+      const rawDbError = 'ER_DUP_ENTRY: Duplicate entry "admin@hrnexus.com" for key "users.email" at Query.Sequence';
       const sanitized = sanitizeErrorMessage(rawDbError, 409);
       assert.strictEqual(sanitized.includes('ER_DUP_ENTRY'), false);
       assert.strictEqual(sanitized.includes('users.email'), false);
@@ -393,7 +393,7 @@ test('PEOPLEPAY360 — PHASE 7.4 FRONTEND SECURITY & AUTHORIZATION AUDIT', async
       // Valid JWT signed by server contains role: 'Employee'
       const authenticEmployeeToken = createMockJwt({
         userId: 'USR-EMP-1',
-        email: 'employee@peoplepay360.com',
+        email: 'employee@hrnexus.com',
         role: 'Employee', // Cryptographically signed
       });
 

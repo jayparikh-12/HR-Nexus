@@ -44,7 +44,7 @@ app.get('/api/health', async (_req, res) => {
   const dbResult = await testDatabaseConnection();
   res.json({
     status: 'ok',
-    service: 'PeoplePay360 Server',
+    service: 'HR Nexus Server',
     timestamp: new Date().toISOString(),
     database: {
       connected: dbResult.connected,
@@ -77,7 +77,7 @@ export { app };
 
 if (process.env.NODE_ENV !== 'test') {
   const server = app.listen(PORT, async () => {
-    console.log(`[PeoplePay360] Server running on http://localhost:${PORT}`);
+    console.log(`[HR Nexus] Server running on http://localhost:${PORT}`);
     const dbResult = await testDatabaseConnection();
     if (dbResult.connected) {
       console.log(`[Database] MySQL connection established (database: ${dbResult.details?.database})`);
@@ -88,9 +88,9 @@ if (process.env.NODE_ENV !== 'test') {
   });
 
   const gracefulShutdown = (signal: string) => {
-    console.log(`[PeoplePay360] Received ${signal}. Initiating graceful shutdown...`);
+    console.log(`[HR Nexus] Received ${signal}. Initiating graceful shutdown...`);
     server.close(async () => {
-      console.log('[PeoplePay360] HTTP server closed.');
+      console.log('[HR Nexus] HTTP server closed.');
       try {
         await pool.end();
         console.log('[Database] MySQL connection pool closed.');
@@ -102,7 +102,7 @@ if (process.env.NODE_ENV !== 'test') {
     });
 
     setTimeout(() => {
-      console.error('[PeoplePay360] Forcefully shutting down after timeout.');
+      console.error('[HR Nexus] Forcefully shutting down after timeout.');
       process.exit(1);
     }, 10000).unref();
   };

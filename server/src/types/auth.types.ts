@@ -1,8 +1,6 @@
 export type UserRole =
   | 'Employee'
   | 'HR Manager'
-  | 'HR Payroll User'
-  | 'HR Payroll Manager'
   | 'Admin';
 
 export interface AuthenticatedUser {

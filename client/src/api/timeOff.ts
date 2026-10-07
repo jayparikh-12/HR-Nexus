@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Time Off API Module
+ * HR Nexus — Time Off API Module
  *
  * Centralized typed wrappers for /api/time-off endpoints.
  * Automatically attaches Authorization: Bearer <token> via apiFetch.

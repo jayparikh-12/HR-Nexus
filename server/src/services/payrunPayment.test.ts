@@ -196,26 +196,21 @@ describe('PHASE 5.4 — Controlled Payrun Payment Workflow', () => {
     );
   });
 
-  it('6. Forbidden role cannot mark PAID (HR Manager without payroll authority)', () => {
+  it('6. Authorized roles can mark PAID (Admin and HR Manager in 3-Tier RBAC)', () => {
     assert.equal(
       roleHasPermission(ROLES.HR_MANAGER, PERMISSIONS.PAYRUN_PAY),
-      false,
-      'HR_MANAGER must NOT have PAYRUN_PAY permission'
-    );
-    assert.equal(
-      roleHasPermission(ROLES.HR_PAYROLL_USER, PERMISSIONS.PAYRUN_PAY),
-      false,
-      'HR_PAYROLL_USER must NOT have PAYRUN_PAY permission'
-    );
-    assert.equal(
-      roleHasPermission(ROLES.HR_PAYROLL_MANAGER, PERMISSIONS.PAYRUN_PAY),
       true,
-      'HR_PAYROLL_MANAGER must have PAYRUN_PAY permission'
+      'HR_MANAGER must have PAYRUN_PAY permission'
     );
     assert.equal(
       roleHasPermission(ROLES.ADMIN, PERMISSIONS.PAYRUN_PAY),
       true,
       'ADMIN must have PAYRUN_PAY permission'
+    );
+    assert.equal(
+      roleHasPermission(ROLES.EMPLOYEE, PERMISSIONS.PAYRUN_PAY),
+      false,
+      'EMPLOYEE must NOT have PAYRUN_PAY permission'
     );
   });
 

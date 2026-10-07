@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 7.2 API Validation & Error Handling Verification Suite
+ * HR Nexus — Phase 7.2 API Validation & Error Handling Verification Suite
  *
  * Tests the complete frontend API error handling and validation hardening:
  * 1. Valid API request parsing
@@ -32,9 +32,9 @@ import {
   extractErrorDetails,
 } from '../api/client';
 
-test('PEOPLEPAY360 — PHASE 7.2 FRONTEND API VALIDATION & ERROR HANDLING', async (t) => {
+test('HR NEXUS — PHASE 7.2 FRONTEND API VALIDATION & ERROR HANDLING', async (t) => {
   console.log('\n================================================================');
-  console.log('🛡️  PEOPLEPAY360 — PHASE 7.2 API VALIDATION & ERROR HARDENING 🛡️');
+  console.log('🛡️  HR NEXUS — PHASE 7.2 API VALIDATION & ERROR HARDENING 🛡️');
   console.log('================================================================\n');
 
   // ── 1. Valid API Request Parsing ───────────────────────────────────────────
@@ -298,7 +298,7 @@ test('PEOPLEPAY360 — PHASE 7.2 FRONTEND API VALIDATION & ERROR HANDLING', asyn
         (err: any) => {
           assert.strictEqual(err instanceof ApiError, true);
           assert.strictEqual(err.statusCode, 0);
-          assert.strictEqual(err.message, 'Unable to connect to the PeoplePay360 server. Please verify your connection and try again.');
+          assert.strictEqual(err.message, 'Unable to connect to the HR Nexus server. Please verify your connection and try again.');
           return true;
         }
       );

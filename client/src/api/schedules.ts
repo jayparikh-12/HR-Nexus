@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Working Schedule API Module
+ * HR Nexus — Working Schedule API Module
  *
  * Centralized typed wrappers for /api/schedules endpoints.
  * Automatically attaches Authorization: Bearer <token> via apiFetch.

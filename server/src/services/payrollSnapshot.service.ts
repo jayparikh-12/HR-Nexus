@@ -1,5 +1,5 @@
 /**
- * Payroll Calculation Snapshot Service — PeoplePay360
+ * Payroll Calculation Snapshot Service — HR Nexus
  *
  * Sits strictly between the pure deterministic PayrollEngine and the database repository.
  *

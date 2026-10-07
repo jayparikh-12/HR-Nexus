@@ -1,4 +1,4 @@
--- PeoplePay360 Initial Seed Data
+-- HR Nexus Initial Seed Data
 
 -- Employees
 INSERT INTO employees (id, name, email, department, position, status, join_date, bank_account) VALUES

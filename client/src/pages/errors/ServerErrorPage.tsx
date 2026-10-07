@@ -30,7 +30,7 @@ export const ServerErrorPage: React.FC<ServerErrorPageProps> = ({ onRetry, messa
       badgeType="danger"
       icon={<ServerCrash size={36} />}
       title="Something Went Wrong"
-      message={messageOverride || "The PeoplePay360 server encountered an unexpected error while processing this request. Our systems have safely isolated the event."}
+      message={messageOverride || "The HR Nexus server encountered an unexpected error while processing this request. Our systems have safely isolated the event."}
       detail="No data has been compromised. Please try again or return to your operational workspace."
       primaryAction={{
         label: 'Try Again',

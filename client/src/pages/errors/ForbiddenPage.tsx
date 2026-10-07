@@ -18,7 +18,7 @@ export const ForbiddenPage: React.FC = () => {
       icon={<ShieldAlert size={36} />}
       title="Access Restricted"
       message="You do not have the required enterprise permissions to access this module or resource."
-      detail={`Active authenticated role: ${displayRole}${user?.email ? ` (${user.email})` : ''}. If you require access, please request role escalation from your PeoplePay360 administrator.`}
+      detail={`Active authenticated role: ${displayRole}${user?.email ? ` (${user.email})` : ''}. If you require access, please request role escalation from your HR Nexus administrator.`}
       primaryAction={{
         label: 'Return to Workspace',
         variant: 'primary',

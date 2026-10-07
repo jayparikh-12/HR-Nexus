@@ -22,7 +22,7 @@ export const UnauthorizedPage: React.FC = () => {
       icon={<LockKeyhole size={36} />}
       title="Authentication Required"
       message="Authentication is needed to access this resource. Your session may have expired or you have not yet logged in."
-      detail="For organizational data security, valid credentials must be authenticated before accessing PeoplePay360."
+      detail="For organizational data security, valid credentials must be authenticated before accessing HR Nexus."
       primaryAction={{
         label: 'Sign In',
         variant: 'primary',

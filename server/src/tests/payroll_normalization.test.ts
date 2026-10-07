@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 4.1, 4.2, 4.3, 4.5, 4.9 & 4.10 Automated Verification Suite
+ * HR Nexus — Phase 4.1, 4.2, 4.3, 4.5, 4.9 & 4.10 Automated Verification Suite
  *
  * Comprehensive test suite covering:
  * - Employee + Contract Payroll Inputs (Phase 4.3)
@@ -63,7 +63,7 @@ function pass(testName: string) {
 
 async function runTests() {
   console.log('================================================================');
-  console.log('🧪 PEOPLEPAY360 — PHASE 4.3, 4.5, 4.9 & 4.10 VERIFICATION TESTS 🧪');
+  console.log('🧪 HR NEXUS — PHASE 4.3, 4.5, 4.9 & 4.10 VERIFICATION TESTS 🧪');
   console.log('================================================================\n');
 
   // ── Test 1: Employee is correctly normalized into payroll input ──────────────

@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 Centralized API Client
+ * HR Nexus Centralized API Client
  *
  * Lightweight, robust fetch abstraction that:
  * - Directs calls to the backend base URL
@@ -8,8 +8,8 @@
  * - Avoids exposing technical stack traces to UI layers
  */
 
-export const TOKEN_STORAGE_KEY = 'peoplepay360_auth_token';
-export const USER_STORAGE_KEY = 'peoplepay360_auth_user';
+export const TOKEN_STORAGE_KEY = 'hrnexus_auth_token';
+export const USER_STORAGE_KEY = 'hrnexus_auth_user';
 
 export class ApiError extends Error {
     statusCode: number;
@@ -100,7 +100,7 @@ export function isTechnicalError(message: string): boolean {
 export function getDefaultErrorMessage(statusCode: number): string {
     switch (statusCode) {
         case 0:
-            return 'Unable to connect to the PeoplePay360 server. Please verify your connection and try again.';
+            return 'Unable to connect to the HR Nexus server. Please verify your connection and try again.';
         case 400:
             return 'Invalid request. Please check the entered information and try again.';
         case 401:
@@ -257,7 +257,7 @@ function notifyUnauthorized(): void {
 
 export function getStoredToken(): string | null {
     try {
-        return localStorage.getItem(TOKEN_STORAGE_KEY);
+        return localStorage.getItem(TOKEN_STORAGE_KEY) || localStorage.getItem('peoplepay360_auth_token');
     } catch {
         return null;
     }
@@ -281,7 +281,7 @@ export function clearStoredToken(): void {
 
 export function getStoredUser(): ApiUser | null {
     try {
-        const raw = localStorage.getItem(USER_STORAGE_KEY);
+        const raw = localStorage.getItem(USER_STORAGE_KEY) || localStorage.getItem('peoplepay360_auth_user');
         return raw ? JSON.parse(raw) : null;
     } catch {
         return null;

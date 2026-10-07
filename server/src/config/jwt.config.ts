@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Centralized JWT Configuration
+ * HR Nexus — Centralized JWT Configuration
  *
  * Single source of truth for JWT signing and verification options.
  * Prevents algorithm confusion and hardcoded production secret vulnerabilities.

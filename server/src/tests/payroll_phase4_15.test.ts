@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — PHASE 4.15 TEST SUITE: Final Net Salary Calculation
+ * HR Nexus — PHASE 4.15 TEST SUITE: Final Net Salary Calculation
  *
  * Comprehensive end-to-end verification suite for:
  * - PHASE 4.15: Final Net Salary Calculation

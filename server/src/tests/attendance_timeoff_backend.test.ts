@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 6.5 Attendance & Time-Off Analytics Verification Suite (Backend Only)
+ * HR Nexus — Phase 6.5 Attendance & Time-Off Analytics Verification Suite (Backend Only)
  *
  * Verifies all Phase 6.5 backend requirements:
  * 1. Security: Authentication enforcement (401 on missing token)
@@ -76,9 +76,9 @@ function fail(testName: string, err: unknown) {
   console.error(`  ❌ [FAIL] ${testName}:`, err instanceof Error ? err.message : err);
 }
 
-test('PeoplePay360 — Phase 6.5 Attendance & Time-Off Analytics Backend Verification Suite', async () => {
+test('HR Nexus — Phase 6.5 Attendance & Time-Off Analytics Backend Verification Suite', async () => {
   console.log('\n================================================================');
-  console.log('🔍 PEOPLEPAY360 — PHASE 6.5 ATTENDANCE & TIME-OFF BACKEND TESTS 🔍');
+  console.log('🔍 HR NEXUS — PHASE 6.5 ATTENDANCE & TIME-OFF BACKEND TESTS 🔍');
   console.log('================================================================\n');
 
   // ── 1. Security: Authentication Enforcement ────────────────────────────────
@@ -99,7 +99,7 @@ test('PeoplePay360 — Phase 6.5 Attendance & Time-Off Analytics Backend Verific
   try {
     const employeeUser = {
       id: 'emp-normal',
-      email: 'employee@peoplepay360.internal',
+      email: 'employee@hrnexus.internal',
       role: 'EMPLOYEE',
       permissions: [PERMISSIONS.PAYSLIP_READ],
     };
@@ -112,7 +112,7 @@ test('PeoplePay360 — Phase 6.5 Attendance & Time-Off Analytics Backend Verific
 
     const adminUser = {
       id: 'admin-1',
-      email: 'admin@peoplepay360.internal',
+      email: 'admin@hrnexus.internal',
       role: 'ADMIN',
       permissions: [PERMISSIONS.EMPLOYEE_READ, PERMISSIONS.PAYRUN_READ],
     };
@@ -137,8 +137,8 @@ test('PeoplePay360 — Phase 6.5 Attendance & Time-Off Analytics Backend Verific
     if (employees.length === 0) {
       await executeQuery(
         `INSERT INTO employees (id, empCode, firstName, lastName, email, department, jobPosition, createdAt) VALUES 
-         (?, ?, 'Alice', 'Dev', 'alice.test@peoplepay360.internal', 'Engineering', 'Developer', '2026-01-01'),
-         (?, ?, 'Bob', 'Ops', 'bob.test@peoplepay360.internal', 'Operations', 'Coordinator', '2026-01-01')`,
+         (?, ?, 'Alice', 'Dev', 'alice.test@hrnexus.internal', 'Engineering', 'Developer', '2026-01-01'),
+         (?, ?, 'Bob', 'Ops', 'bob.test@hrnexus.internal', 'Operations', 'Coordinator', '2026-01-01')`,
         [emp1Id, emp1Id, emp2Id, emp2Id]
       );
     }

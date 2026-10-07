@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 5 Final Verification Suite
+ * HR Nexus — Phase 5 Final Verification Suite
  *
  * Verifies all 20 sections of Phase 5:
  * 1. Payrun lifecycle (DRAFT -> COMPUTED -> VALIDATED -> PAID)
@@ -62,7 +62,7 @@ function fail(testName: string, err: any) {
 
 async function runFinalVerification() {
   console.log('================================================================');
-  console.log('🔍 PEOPLEPAY360 — PHASE 5 FINAL COMPREHENSIVE VERIFICATION 🔍');
+  console.log('🔍 HR NEXUS — PHASE 5 FINAL COMPREHENSIVE VERIFICATION 🔍');
   console.log('================================================================\n');
 
   const testSuffix = randomUUID().slice(0, 6).toUpperCase();

@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Services API Wrapper
+ * HR Nexus — Services API Wrapper
  *
  * Delegates directly to the centralized client in src/api/client.ts.
  * Guarantees a single API client architecture across the application.

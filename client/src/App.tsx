@@ -31,16 +31,8 @@ import {
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { employeesApi } from './api/employees';
 import { payrollApi } from './api/payroll';
-import { initialEmployees } from './data';
 import type { Employee, Payrun } from './types';
 import './App.css';
-
-// Phase 2.3 shim: merge static attendance/leave stats onto API records
-const LOCAL_STAT_SHIMS: Record<string, { attendanceRate: number; leaveBalance: number }> = {};
-initialEmployees.forEach((e) => {
-  LOCAL_STAT_SHIMS[e.id] = { attendanceRate: e.attendanceRate, leaveBalance: e.leaveBalance };
-});
-
 import { PATH_TO_TAB, TAB_TO_PATH, isTabAllowed, getDefaultWorkspacePath } from './utils/routes';
 
 // ── Session Restoration Loader ─────────────────────────────────────────────────
@@ -76,7 +68,7 @@ export const SessionRestoreLoader: React.FC = () => (
           color: '#ffffff',
         }}
       >
-        PeoplePay360
+        HR Nexus
       </div>
       <div
         style={{
@@ -140,11 +132,7 @@ export const AppShell: React.FC = () => {
     setEmployeesError(null);
     try {
       const apiEmployees = await employeesApi.getAll();
-      const merged = apiEmployees.map((emp) => ({
-        ...emp,
-        ...(LOCAL_STAT_SHIMS[emp.id] ?? { attendanceRate: 0, leaveBalance: 0 }),
-      }));
-      setEmployees(merged);
+      setEmployees(apiEmployees);
     } catch (err: unknown) {
       console.error('[App] Failed to load employees from API:', err instanceof Error ? err.message : String(err));
       setEmployeesError(err instanceof Error ? err.message : 'Could not load employee data from server.');
@@ -169,7 +157,7 @@ export const AppShell: React.FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       if (displayRole !== 'Employee') fetchEmployees();
-      if (['Admin', 'HR Payroll Manager', 'HR Payroll User'].includes(displayRole)) fetchPayruns();
+      if (['Admin', 'HR Manager'].includes(displayRole)) fetchPayruns();
     }
   }, [isAuthenticated, displayRole, fetchEmployees, fetchPayruns]);
 

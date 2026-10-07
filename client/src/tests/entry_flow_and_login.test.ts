@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Direct Entry Flow & Enterprise Login Redesign Test Suite
+ * HR Nexus — Direct Entry Flow & Enterprise Login Redesign Test Suite
  * 
  * Verifies:
  * 1. Root routing flow:
@@ -10,7 +10,7 @@
  *    - Standalone error routes (/unauthorized, /forbidden, /not-found, /server-error) remain standalone
  *    - Zero references to obsolete Landing.tsx or Landing component
  * 2. Enterprise Login Page Redesign:
- *    - Professional PeoplePay360 branding
+ *    - Professional HR Nexus branding
  *    - Product capabilities informational panel contains all 6 required modules:
  *      * Employee Management
  *      * Attendance Tracking
@@ -35,9 +35,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { getDefaultWorkspacePath, isTabAllowed } from '../utils/routes';
 
-test('PEOPLEPAY360 — DIRECT ENTRY FLOW & LOGIN REDESIGN SUITE', async (t) => {
+test('HR NEXUS — DIRECT ENTRY FLOW & LOGIN REDESIGN SUITE', async (t) => {
   console.log('\n================================================================');
-  console.log('🔐 PEOPLEPAY360 — ENTRY FLOW & ENTERPRISE LOGIN AUDIT 🔐');
+  console.log('🔐 HR NEXUS — ENTRY FLOW & ENTERPRISE LOGIN AUDIT 🔐');
   console.log('================================================================\n');
 
   const appTsx = fs.readFileSync(path.resolve(process.cwd(), 'client/src/App.tsx'), 'utf-8');

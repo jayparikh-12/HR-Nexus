@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Centralized Permission Configuration
+ * HR Nexus — Centralized Permission Configuration
  *
  * Maps each AppRole to the set of AppPermissions it holds.
  *
@@ -35,27 +35,13 @@ export const ROLE_PERMISSIONS: Readonly<Record<AppRole, ReadonlySet<AppPermissio
     PERMISSIONS.PAYRUN_PAY,
     PERMISSIONS.STRUCTURE_READ,
     PERMISSIONS.STRUCTURE_WRITE,
+    PERMISSIONS.PAYSLIP_READ,
     PERMISSIONS.SYSTEM_ADMIN,
   ]),
 
-  // ── HR_PAYROLL_MANAGER ─────────────────────────────────────────────────
-  // Full payroll lifecycle (create → compute → validate → mark paid).
-  // Read-only access to employee and contract records for payroll calculation.
-  // NO rights to modify employee/contract records, approve time-off, or edit salary rules.
-  [ROLES.HR_PAYROLL_MANAGER]: new Set<AppPermission>([
-    PERMISSIONS.EMPLOYEE_READ,
-    PERMISSIONS.CONTRACT_READ,
-    PERMISSIONS.ATTENDANCE_READ,
-    PERMISSIONS.STRUCTURE_READ,
-    PERMISSIONS.PAYRUN_READ,
-    PERMISSIONS.PAYRUN_CREATE,
-    PERMISSIONS.PAYRUN_VALIDATE,
-    PERMISSIONS.PAYRUN_PAY,
-  ]),
-
   // ── HR_MANAGER ─────────────────────────────────────────────────────────
-  // People management (employees, contracts, working schedules) + attendance + time-off approval.
-  // CANNOT touch payroll runs, validate/pay payruns, or edit salary structures/rules.
+  // Complete workforce and operational management: employees, contracts,
+  // working schedules, attendance, time-off approvals, and payroll lifecycle.
   [ROLES.HR_MANAGER]: new Set<AppPermission>([
     PERMISSIONS.EMPLOYEE_READ,
     PERMISSIONS.EMPLOYEE_WRITE,
@@ -65,22 +51,17 @@ export const ROLE_PERMISSIONS: Readonly<Record<AppRole, ReadonlySet<AppPermissio
     PERMISSIONS.ATTENDANCE_WRITE,
     PERMISSIONS.TIMEOFF_READ,
     PERMISSIONS.TIMEOFF_APPROVE,
-  ]),
-
-  // ── HR_PAYROLL_USER ────────────────────────────────────────────────────
-  // Operational payroll preparation: read employees, attendance, and draft/read payruns.
-  // Cannot validate/pay payruns or modify HR records.
-  [ROLES.HR_PAYROLL_USER]: new Set<AppPermission>([
-    PERMISSIONS.EMPLOYEE_READ,
-    PERMISSIONS.CONTRACT_READ,
-    PERMISSIONS.ATTENDANCE_READ,
     PERMISSIONS.PAYRUN_READ,
     PERMISSIONS.PAYRUN_CREATE,
+    PERMISSIONS.PAYRUN_VALIDATE,
+    PERMISSIONS.PAYRUN_PAY,
+    PERMISSIONS.STRUCTURE_READ,
+    PERMISSIONS.STRUCTURE_WRITE,
+    PERMISSIONS.PAYSLIP_READ,
   ]),
 
   // ── EMPLOYEE ───────────────────────────────────────────────────────────
-  // Self-service only: own attendance check-in/out, own time-off request, own payslips.
-  // Cannot access employee directory, company payruns, contracts, or salary rules.
+  // Self-service portal: own attendance check-in/out, own time-off request, own payslips.
   [ROLES.EMPLOYEE]: new Set<AppPermission>([
     PERMISSIONS.ATTENDANCE_READ,
     PERMISSIONS.ATTENDANCE_WRITE,
@@ -97,10 +78,8 @@ export function normalizeRoleString(role: string | undefined | null): AppRole | 
   if (!role) return null;
   const clean = role.trim().toUpperCase().replace(/\s+/g, '_');
   if (clean.includes('ADMIN')) return ROLES.ADMIN;
-  if (clean.includes('PAYROLL_MANAGER') || clean === 'HR_PAYROLL_MANAGER') return ROLES.HR_PAYROLL_MANAGER;
-  if (clean.includes('PAYROLL_USER') || clean === 'HR_PAYROLL_USER') return ROLES.HR_PAYROLL_USER;
-  if (clean.includes('HR_MANAGER') || clean === 'HR_MANAGER') return ROLES.HR_MANAGER;
-  if (clean.includes('EMPLOYEE') || clean === 'EMPLOYEE') return ROLES.EMPLOYEE;
+  if (clean.includes('HR') || clean.includes('MANAGER') || clean.includes('PAYROLL')) return ROLES.HR_MANAGER;
+  if (clean.includes('EMPLOYEE')) return ROLES.EMPLOYEE;
   return null;
 }
 

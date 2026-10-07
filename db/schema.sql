@@ -1,5 +1,5 @@
 -- ============================================================================
--- PeoplePay360 Relational Database Schema
+-- HR Nexus Relational Database Schema
 -- Normalized to Boyce-Codd Normal Form (BCNF) minimum.
 -- Explicit FOREIGN KEY constraints replace inert inline REFERENCES clauses.
 -- Hardened for Referential Integrity, Domain Checks, and Historical Payroll Preservation.

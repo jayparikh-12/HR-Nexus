@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — PHASE 4.11 & 4.12 VERIFICATION SUITE
+ * HR Nexus — PHASE 4.11 & 4.12 VERIFICATION SUITE
  *
  * PHASE 4.11 — Attendance & Overtime Integration
  * PHASE 4.12 — Time Off & Unpaid Leave Integration

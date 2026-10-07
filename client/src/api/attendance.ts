@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Attendance API Module
+ * HR Nexus — Attendance API Module
  *
  * Centralized typed wrappers for /api/attendance endpoints.
  * Automatically attaches Authorization: Bearer <token> via apiFetch.

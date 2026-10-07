@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 7.5 Complete Frontend Regression Testing & Stability Suite
+ * HR Nexus — Phase 7.5 Complete Frontend Regression Testing & Stability Suite
  *
  * Verifies all 18 Regression Areas:
  * 1. Application startup & session restoration
@@ -60,9 +60,9 @@ function createMockJwt(payload: Record<string, any>): string {
   return `${encodedHeader}.${encodedPayload}.${signature}`;
 }
 
-test('PEOPLEPAY360 — PHASE 7.5 COMPLETE FRONTEND REGRESSION & STABILITY AUDIT', async (t) => {
+test('HR NEXUS — PHASE 7.5 COMPLETE FRONTEND REGRESSION & STABILITY AUDIT', async (t) => {
   console.log('\n================================================================');
-  console.log('💎 PEOPLEPAY360 — PHASE 7.5 FRONTEND REGRESSION AUDIT 💎');
+  console.log('💎 HR NEXUS — PHASE 7.5 FRONTEND REGRESSION AUDIT 💎');
   console.log('================================================================\n');
 
   // ── AREA 1: Application Startup & Session Restoration ──────────────────────
@@ -77,7 +77,7 @@ test('PEOPLEPAY360 — PHASE 7.5 COMPLETE FRONTEND REGRESSION & STABILITY AUDIT'
       const now = Math.floor(Date.now() / 1000);
       const token = createMockJwt({
         userId: 'USR-ADMIN-1',
-        email: 'admin@peoplepay360.com',
+        email: 'admin@hrnexus.com',
         role: 'ADMIN',
         iat: now,
         exp: now + 1200,
@@ -86,7 +86,7 @@ test('PEOPLEPAY360 — PHASE 7.5 COMPLETE FRONTEND REGRESSION & STABILITY AUDIT'
       const parsed = parseJwtPayload(token);
       assert.ok(parsed);
       assert.strictEqual(parsed.userId, 'USR-ADMIN-1');
-      assert.strictEqual(parsed.email, 'admin@peoplepay360.com');
+      assert.strictEqual(parsed.email, 'admin@hrnexus.com');
       assert.strictEqual(parsed.role, 'ADMIN');
       assert.strictEqual(isTokenExpired(token), false);
     });
@@ -436,7 +436,7 @@ test('PEOPLEPAY360 — PHASE 7.5 COMPLETE FRONTEND REGRESSION & STABILITY AUDIT'
       assert.strictEqual(getDefaultErrorMessage(404), 'The requested resource could not be found.');
       assert.strictEqual(getDefaultErrorMessage(409), 'A conflict occurred with an existing record. Please review your entries.');
       assert.strictEqual(getDefaultErrorMessage(500), 'The server encountered an unexpected error. Please try again later.');
-      assert.strictEqual(getDefaultErrorMessage(0), 'Unable to connect to the PeoplePay360 server. Please verify your connection and try again.');
+      assert.strictEqual(getDefaultErrorMessage(0), 'Unable to connect to the HR Nexus server. Please verify your connection and try again.');
     });
 
     await tSub.test('14.2 Database error signatures are sanitized to friendly messages', () => {

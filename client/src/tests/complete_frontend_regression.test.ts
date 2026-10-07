@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 7.5 Complete Frontend Regression & Stability Testing Suite
+ * HR Nexus — Phase 7.5 Complete Frontend Regression & Stability Testing Suite
  *
  * Exhaustive automated regression test suite covering:
  * 1. Application Startup & Auth State Initialization
@@ -59,16 +59,16 @@ function createMockJwt(payload: Record<string, any>): string {
   return `${encodedHeader}.${encodedPayload}.${signature}`;
 }
 
-test('PEOPLEPAY360 — PHASE 7.5 COMPLETE FRONTEND REGRESSION SUITE', async (t) => {
+test('HR NEXUS — PHASE 7.5 COMPLETE FRONTEND REGRESSION SUITE', async (t) => {
   console.log('\n================================================================');
-  console.log('🚀  PEOPLEPAY360 — PHASE 7.5 FRONTEND REGRESSION AUDIT 🚀');
+  console.log('🚀  HR NEXUS — PHASE 7.5 FRONTEND REGRESSION AUDIT 🚀');
   console.log('================================================================\n');
 
   // ── 1. APPLICATION STARTUP & AUTH INITIALIZATION ────────────────────────────
   await t.test('1. Application Startup & Auth State Initialization', async (tSub) => {
     await tSub.test('1.1 Storage keys conform to secure enterprise namespacing', () => {
-      assert.strictEqual(TOKEN_STORAGE_KEY, 'peoplepay360_auth_token');
-      assert.strictEqual(USER_STORAGE_KEY, 'peoplepay360_auth_user');
+      assert.strictEqual(TOKEN_STORAGE_KEY, 'hrnexus_auth_token');
+      assert.strictEqual(USER_STORAGE_KEY, 'hrnexus_auth_user');
     });
 
     await tSub.test('1.2 Session restore validator correctly discriminates unexpired vs expired token', () => {
@@ -511,16 +511,13 @@ test('PEOPLEPAY360 — PHASE 7.5 COMPLETE FRONTEND REGRESSION SUITE', async (t) 
       assert.strictEqual(isTabAllowed('settings', 'Employee'), false);
     });
 
-    await tSub.test('11.3 HR Payroll Manager vs HR Manager role boundaries', () => {
-      // HR Manager manages employees & time-off, but NOT payruns
+    await tSub.test('11.3 3-Tier RBAC: HR Manager operational capabilities vs Admin', () => {
+      // HR Manager manages employees, time-off, and payruns
       assert.strictEqual(isTabAllowed('employees', 'HR Manager'), true);
       assert.strictEqual(isTabAllowed('time-off', 'HR Manager'), true);
-      assert.strictEqual(isTabAllowed('payruns', 'HR Manager'), false);
-
-      // HR Payroll Manager manages payruns, contracts, and employees
-      assert.strictEqual(isTabAllowed('payruns', 'HR Payroll Manager'), true);
-      assert.strictEqual(isTabAllowed('contracts', 'HR Payroll Manager'), true);
-      assert.strictEqual(isTabAllowed('salary-rules', 'HR Payroll Manager'), false, 'Salary structures/rules reserved for Admin');
+      assert.strictEqual(isTabAllowed('payruns', 'HR Manager'), true);
+      assert.strictEqual(isTabAllowed('contracts', 'HR Manager'), true);
+      assert.strictEqual(isTabAllowed('settings', 'HR Manager'), false, 'Settings console reserved for Admin');
     });
   });
 

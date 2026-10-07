@@ -32,6 +32,8 @@ export interface EmployeeRow extends RowDataPacket {
   active_contract_id: string | null;
   wage: number | string | null;
   working_schedule: string | null;
+  attendance_rate?: number | string | null;
+  leave_balance?: number | string | null;
 }
 
 export interface EmployeeRecord {
@@ -153,8 +155,12 @@ function mapRowToRecord(row: EmployeeRow): EmployeeRecord {
     schedule: row.working_schedule || 'Standard 40h',
     bankName: row.bank_name || null,
     bankAccount: row.bank_account || '—',
-    attendanceRate: 0,
-    leaveBalance: 0,
+    attendanceRate: row.attendance_rate !== null && row.attendance_rate !== undefined
+      ? Math.round(Number(row.attendance_rate))
+      : 100,
+    leaveBalance: row.leave_balance !== null && row.leave_balance !== undefined
+      ? Math.round(Number(row.leave_balance))
+      : 24,
   };
 }
 
@@ -177,7 +183,25 @@ const EMPLOYEE_SELECT = `
     e.createdAt AS join_date,
     e.createdAt AS created_at,
     c.id AS active_contract_id,
-    c.wage AS wage
+    c.wage AS wage,
+    COALESCE((
+      SELECT ROUND(
+        (SUM(CASE WHEN a.status IN ('PRESENT', 'OVERTIME') THEN 1.0 WHEN a.status = 'LATE' THEN 0.8 ELSE 0.0 END) * 100.0) /
+        NULLIF(COUNT(*), 0)
+      )
+      FROM attendance_records a
+      WHERE a.employee_id COLLATE utf8mb4_unicode_ci = e.id
+         OR a.employee_id COLLATE utf8mb4_unicode_ci = e.empCode
+         OR a.employee_id COLLATE utf8mb4_unicode_ci = REPLACE(e.id, '-', '')
+    ), 100) AS attendance_rate,
+    GREATEST(0, 24 - COALESCE((
+      SELECT SUM(tor.duration_days)
+      FROM time_off_requests tor
+      WHERE (tor.employee_id COLLATE utf8mb4_unicode_ci = e.id
+         OR tor.employee_id COLLATE utf8mb4_unicode_ci = e.empCode
+         OR tor.employee_id COLLATE utf8mb4_unicode_ci = REPLACE(e.id, '-', ''))
+        AND tor.status = 'APPROVED'
+    ), 0)) AS leave_balance
   FROM employees e
   LEFT JOIN contracts c
     ON (c.employee_id COLLATE utf8mb4_unicode_ci = e.id)
@@ -189,7 +213,7 @@ const EMPLOYEE_SELECT = `
 // ── Repository functions ─────────────────────────────────────────────────────
 
 export async function getAllEmployees(): Promise<EmployeeRecord[]> {
-  const sql = `${EMPLOYEE_SELECT} ORDER BY e.id ASC`;
+  const sql = `${EMPLOYEE_SELECT} ORDER BY CASE WHEN UPPER(e.status) = 'TERMINATED' OR UPPER(e.status) = 'INACTIVE' THEN 1 ELSE 0 END ASC, e.id ASC`;
   const rows = await executeQuery<EmployeeRow[]>(sql, []);
   return rows.map(mapRowToRecord);
 }

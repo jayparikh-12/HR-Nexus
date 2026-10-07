@@ -152,14 +152,12 @@ describe('PHASE 5.3 — Payrun Validation Workflow', () => {
     assert.ok(PERMISSIONS.PAYRUN_VALIDATE);
   });
 
-  it('5. Forbidden role cannot validate (RBAC enforcement)', () => {
-    // Permitted roles
+  it('5. Forbidden role cannot validate (RBAC enforcement for 3-Tier Architecture)', () => {
+    // Permitted roles in 3-Tier Architecture
     assert.equal(roleHasPermission(ROLES.ADMIN, PERMISSIONS.PAYRUN_VALIDATE), true);
-    assert.equal(roleHasPermission(ROLES.HR_PAYROLL_MANAGER, PERMISSIONS.PAYRUN_VALIDATE), true);
+    assert.equal(roleHasPermission(ROLES.HR_MANAGER, PERMISSIONS.PAYRUN_VALIDATE), true);
 
     // Forbidden roles
-    assert.equal(roleHasPermission(ROLES.HR_MANAGER, PERMISSIONS.PAYRUN_VALIDATE), false);
-    assert.equal(roleHasPermission(ROLES.HR_PAYROLL_USER, PERMISSIONS.PAYRUN_VALIDATE), false);
     assert.equal(roleHasPermission(ROLES.EMPLOYEE, PERMISSIONS.PAYRUN_VALIDATE), false);
   });
 

@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Deterministic Payroll Engine
+ * HR Nexus — Deterministic Payroll Engine
  *
  * Phase 4.1 & Phase 4.2: Foundation & Normalized Input Contract.
  * Phase 4.6: Salary Rule Ordering.

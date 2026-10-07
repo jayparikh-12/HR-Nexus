@@ -1,12 +1,12 @@
-# PeoplePay360 — UI/UX & Implementation Blueprint
-**Document Version:** 1.0.0 | **Author:** Pavan & Jay (Team PeoplePay360) | **Scope:** 24-Hour Hackathon Implementation  
+# HR Nexus — UI/UX & Implementation Blueprint
+**Document Version:** 1.0.0 | **Author:** Team HR Nexus | **Scope:** Full Project Implementation  
 **Platform Concept:** Integrated HR & Payroll Operations Platform (Connecting Employee → Contract → Schedule → Attendance → Time Off → Salary Structure → Payrun → Payslip → Analytics)
 
 ---
 
 ## Executive Summary & Design Principles
 
-PeoplePay360 is not a set of disconnected CRUD tables. It is an **orchestrated operational pipeline** where the **Employee Hub** sits at the center, feeding operational inputs (attendance, working schedules, approved time-off leaves) into a deterministic **Payroll Engine** (contracts, salary structures, rule sequences, payrun batches, payslip generation, and executive dashboards).
+HR Nexus is not a set of disconnected CRUD tables. It is an **orchestrated operational pipeline** where the **Employee Hub** sits at the center, feeding operational inputs (attendance, working schedules, approved time-off leaves) into a deterministic **Payroll Engine** (contracts, salary structures, rule sequences, payrun batches, payslip generation, and executive dashboards).
 
 ### Core Principles for Hackathon Execution:
 1. **Framework-Agnostic & Small Vertical Slices:** Screen designs and component contracts decouple frontend presentation from backend architecture.
@@ -19,7 +19,7 @@ PeoplePay360 is not a set of disconnected CRUD tables. It is an **orchestrated o
 ## 1. Complete Sitemap
 
 ```
-PeoplePay360 (Root)
+HR Nexus (Root)
 │
 ├── /login ── Authentication & Role Switcher (Demo Mode)
 │
@@ -64,7 +64,7 @@ PeoplePay360 (Root)
 
 ```
 +--------------------------------------------------------------------------------------------------+
-| BRAND LOGO [PeoplePay360] | Search [Cmd+K] | Active Period: Sept 2026 | [Role: HR Payroll Mgr v] |
+| BRAND LOGO [HR Nexus] | Search [Cmd+K] | Active Period: Sept 2026 | [Role: HR Payroll Mgr v] |
 +---------------------------+----------------------------------------------------------------------+
 | [v] DASHBOARD             | Breadcrumbs: HR / Employees / John Doe (EMP-0042)                     |
 |                           | Page Title: Employee 360 Hub                        [Edit] [Actions v]|
@@ -138,7 +138,7 @@ PeoplePay360 (Root)
 ## 4. Detailed Screen-by-Screen Layout Recommendations
 
 ### SCR-01: Login & Persona Selector
-- **Header:** PeoplePay360 brand identity with sub-heading: *"Integrated HR & Deterministic Payroll Engine"*.
+- **Header:** HR Nexus brand identity with sub-heading: *"Integrated HR & Deterministic Payroll Engine"*.
 - **Left Panel:** Modern illustration or metric highlights (*"100% accurate salary rules with automated time-off deduction sync"*).
 - **Right Panel (Interactive Login Card):**
   - Standard Email / Password inputs with validation states.

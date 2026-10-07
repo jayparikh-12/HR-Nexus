@@ -1,5 +1,5 @@
 /**
- * Dashboard Repository — Centralized SQL Aggregation Layer for PeoplePay360 Dashboard.
+ * Dashboard Repository — Centralized SQL Aggregation Layer for HR Nexus Dashboard.
  *
  * Responsibilities:
  * - Direct aggregation over MySQL database tables: employees, payruns, payslips, attendance_records, time_off_requests.

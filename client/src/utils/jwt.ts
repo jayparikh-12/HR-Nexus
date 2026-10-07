@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 JWT Security Utilities
+ * HR Nexus JWT Security Utilities
  *
  * Lightweight, zero-dependency utilities to safely inspect JWT claims,
  * determine expiration status, and calculate remaining session lifetimes.

@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Authorization Middleware
+ * HR Nexus — Authorization Middleware
  *
  * Provides the `authorize(permission)` factory for route-level permission checks.
  *

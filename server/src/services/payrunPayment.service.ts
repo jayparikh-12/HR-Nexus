@@ -1,5 +1,5 @@
 /**
- * Payrun Payment Service — PeoplePay360
+ * Payrun Payment Service — HR Nexus
  *
  * Sits strictly between the API route layer and the data-access layer:
  *

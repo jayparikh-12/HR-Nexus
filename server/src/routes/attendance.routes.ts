@@ -21,6 +21,7 @@ import {
   getAllAttendance,
   getAttendanceById,
   getActiveCheckIn,
+  getAttendanceByEmployeeAndPeriod,
   findEmployeeByIdOrCode,
   createCheckIn,
   recordCheckOut,
@@ -164,15 +165,20 @@ router.post('/check-in', async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // 2. Prevent duplicate active check-ins for the employee
+    // 2. Prevent duplicate check-ins for the employee on the same date (1 check-in per day limit)
     const targetDate = body.date ? body.date.trim() : undefined;
-    const existingActive = await getActiveCheckIn(employee.id, targetDate);
+    const effectiveDate = targetDate || new Date().toISOString().split('T')[0];
+    const existingDayRecords = await getAttendanceByEmployeeAndPeriod(employee.id, effectiveDate, effectiveDate);
 
-    if (existingActive) {
+    if (existingDayRecords.length > 0) {
+      const existing = existingDayRecords[0];
+      const hasCheckedOut = existing.checkOut && existing.checkOut !== 'Active' && existing.checkOut !== '—';
       res.status(409).json({
         success: false,
-        message: `Employee ${employee.name} already has an active check-in (${existingActive.id}) for this date. Please clock out before checking in again.`,
-        activeRecord: existingActive,
+        message: hasCheckedOut
+          ? `Daily attendance limit reached: Employee ${employee.name} has already checked in and checked out for today (${effectiveDate}). Check-in is limited to 1 time per day.`
+          : `Employee ${employee.name} already has an active check-in (${existing.id}) for today (${effectiveDate}). Check-in is limited to 1 time per day. Please clock out before ending your shift.`,
+        activeRecord: existing,
       });
       return;
     }

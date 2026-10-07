@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 7.1 Frontend Authentication, Session & RBAC Security Audit Suite
+ * HR Nexus — Phase 7.1 Frontend Authentication, Session & RBAC Security Audit Suite
  *
  * Verifies all 12 Security Audit Requirements:
  * 1. Login with valid credentials (JWT generation, safe user payload, claims)
@@ -48,9 +48,9 @@ function createMockJwt(payload: Record<string, any>): string {
   return `${encodedHeader}.${encodedPayload}.${signature}`;
 }
 
-test('PeoplePay360 — Phase 7.1 Frontend Authentication, Session & RBAC Security Audit', async () => {
+test('HR Nexus — Phase 7.1 Frontend Authentication, Session & RBAC Security Audit', async () => {
   console.log('\n================================================================');
-  console.log('🔒 PEOPLEPAY360 — PHASE 7.1 SECURITY AUDIT & HARDENING SUITE 🔒');
+  console.log('🔒 HR NEXUS — PHASE 7.1 SECURITY AUDIT & HARDENING SUITE 🔒');
   console.log('================================================================\n');
 
   // ── 1. Valid Token & Claims Verification ───────────────────────────────────
@@ -149,29 +149,16 @@ test('PeoplePay360 — Phase 7.1 Frontend Authentication, Session & RBAC Securit
     assert.strictEqual(isTabAllowed('attendance', 'HR Manager'), true);
     assert.strictEqual(isTabAllowed('time-off', 'HR Manager'), true);
     assert.strictEqual(isTabAllowed('payslips', 'HR Manager'), true);
-    assert.strictEqual(isTabAllowed('payruns', 'HR Manager'), false, 'HR Manager must NOT access payruns');
-    assert.strictEqual(isTabAllowed('salary-rules', 'HR Manager'), false, 'HR Manager must NOT access salary rules');
+    assert.strictEqual(isTabAllowed('payruns', 'HR Manager'), true, 'HR Manager accesses payruns in 3-Tier model');
+    assert.strictEqual(isTabAllowed('salary-rules', 'HR Manager'), true, 'HR Manager accesses salary rules in 3-Tier model');
     assert.strictEqual(isTabAllowed('settings', 'HR Manager'), false, 'HR Manager must NOT access settings');
 
-    // 3. HR Payroll Manager: Payroll, Employees, Contracts, NOT Schedules or Settings
-    assert.strictEqual(isTabAllowed('dashboard', 'HR Payroll Manager'), true);
-    assert.strictEqual(isTabAllowed('employees', 'HR Payroll Manager'), true);
-    assert.strictEqual(isTabAllowed('contracts', 'HR Payroll Manager'), true);
-    assert.strictEqual(isTabAllowed('attendance', 'HR Payroll Manager'), true);
-    assert.strictEqual(isTabAllowed('payruns', 'HR Payroll Manager'), true);
-    assert.strictEqual(isTabAllowed('payslips', 'HR Payroll Manager'), true);
-    assert.strictEqual(isTabAllowed('schedules', 'HR Payroll Manager'), false, 'HR Payroll Manager must NOT access schedules');
-    assert.strictEqual(isTabAllowed('salary-rules', 'HR Payroll Manager'), false, 'HR Payroll Manager must NOT access salary rules');
-    assert.strictEqual(isTabAllowed('settings', 'HR Payroll Manager'), false, 'HR Payroll Manager must NOT access settings');
-
-    // 4. HR Payroll User: Same tab scope as Payroll Manager
-    assert.strictEqual(isTabAllowed('dashboard', 'HR Payroll User'), true);
-    assert.strictEqual(isTabAllowed('employees', 'HR Payroll User'), true);
-    assert.strictEqual(isTabAllowed('contracts', 'HR Payroll User'), true);
-    assert.strictEqual(isTabAllowed('payruns', 'HR Payroll User'), true);
-    assert.strictEqual(isTabAllowed('payslips', 'HR Payroll User'), true);
-    assert.strictEqual(isTabAllowed('schedules', 'HR Payroll User'), false, 'HR Payroll User must NOT access schedules');
-    assert.strictEqual(isTabAllowed('salary-rules', 'HR Payroll User'), false, 'HR Payroll User must NOT access salary rules');
+    // 3. Role Normalization of legacy aliases into HR Manager
+    assert.strictEqual(toDisplayRole('HR Payroll Manager'), 'HR Manager');
+    assert.strictEqual(toDisplayRole('HR Payroll User'), 'HR Manager');
+    assert.strictEqual(isTabAllowed('payruns', toDisplayRole('HR Payroll Manager')), true);
+    assert.strictEqual(isTabAllowed('employees', toDisplayRole('HR Payroll User')), true);
+    assert.strictEqual(isTabAllowed('settings', toDisplayRole('HR Payroll Manager')), false);
 
     // 5. Employee: Self-service ONLY
     assert.strictEqual(isTabAllowed('dashboard', 'Employee'), true);
@@ -269,8 +256,8 @@ test('PeoplePay360 — Phase 7.1 Frontend Authentication, Session & RBAC Securit
 
   // ── 9. Storage Key Conventions & Sensitive Data Absence ─────────────────────
   try {
-    assert.strictEqual(TOKEN_STORAGE_KEY, 'peoplepay360_auth_token');
-    assert.strictEqual(USER_STORAGE_KEY, 'peoplepay360_auth_user');
+    assert.strictEqual(TOKEN_STORAGE_KEY, 'hrnexus_auth_token');
+    assert.strictEqual(USER_STORAGE_KEY, 'hrnexus_auth_user');
 
     // Verify safe user payload contract
     const safeUser: ApiUser = {

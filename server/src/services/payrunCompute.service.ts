@@ -1,5 +1,5 @@
 /**
- * Payrun Compute Service — PeoplePay360
+ * Payrun Compute Service — HR Nexus
  *
  * Sits strictly between the API route layer and the underlying modules:
  *

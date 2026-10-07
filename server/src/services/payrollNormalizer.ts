@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Payroll Normalization Layer
+ * HR Nexus — Payroll Normalization Layer
  *
  * Transforms heterogeneous domain entities (Employee, Contract, Salary Structure,
  * Salary Rules, Attendance Records, Time Off Requests) and payroll period definitions

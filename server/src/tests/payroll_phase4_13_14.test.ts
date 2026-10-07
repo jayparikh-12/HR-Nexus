@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — PHASE 4.13 & PHASE 4.14 TEST SUITE
+ * HR Nexus — PHASE 4.13 & PHASE 4.14 TEST SUITE
  *
  * Dedicated verification suite for:
  * - PHASE 4.13: Gross Salary Calculation

@@ -1523,7 +1523,7 @@ export const Employees: React.FC<EmployeesProps> = ({
   // Memoize filtered employee directory list based on search and selected department
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return employees.filter((emp) => {
+    const list = employees.filter((emp) => {
       const matchSearch =
         !q ||
         emp.name.toLowerCase().includes(q) ||
@@ -1531,6 +1531,14 @@ export const Employees: React.FC<EmployeesProps> = ({
         emp.id.toLowerCase().includes(q);
       const matchDept = selectedDept === 'ALL' || emp.department === selectedDept;
       return matchSearch && matchDept;
+    });
+
+    // All terminated employees are placed at the very end of the directory
+    return list.sort((a, b) => {
+      const aTerm = a.status === 'TERMINATED' ? 1 : 0;
+      const bTerm = b.status === 'TERMINATED' ? 1 : 0;
+      if (aTerm !== bTerm) return aTerm - bTerm;
+      return 0;
     });
   }, [employees, search, selectedDept]);
 
@@ -1750,7 +1758,7 @@ export const Employees: React.FC<EmployeesProps> = ({
                           </td>
                           <td>
                             <div style={{ fontSize: '12.5px', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                              {emp.dateOfBirth || '—'}
+                              {emp.dateOfBirth ? formatDate(emp.dateOfBirth) : '—'}
                             </div>
                           </td>
                           <td>

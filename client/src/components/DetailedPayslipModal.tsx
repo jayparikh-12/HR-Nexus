@@ -233,7 +233,7 @@ export const DetailedPayslipModal: React.FC<DetailedPayslipModalProps> = ({
               }}>
                 <div>
                   <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary)', letterSpacing: '-0.02em' }}>
-                    PeoplePay360 Inc.
+                    HR Nexus Inc.
                   </div>
                   <div style={{ fontSize: '12px', color: 'var(--slate-500)', marginTop: '2px' }}>
                     Deterministic Enterprise Payroll System

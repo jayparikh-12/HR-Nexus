@@ -1,5 +1,5 @@
 /**
- * Dashboard Routes — Secure Endpoint for PeoplePay360 Dashboard Aggregation.
+ * Dashboard Routes — Secure Endpoint for HR Nexus Dashboard Aggregation.
  *
  * GET /api/dashboard          — Retrieve aggregated metrics with optional filters
  * GET /api/dashboard/summary  — Alias for /api/dashboard

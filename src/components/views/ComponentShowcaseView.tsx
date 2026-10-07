@@ -79,7 +79,7 @@ export const ComponentShowcaseView: React.FC<ComponentShowcaseViewProps> = ({
     <div style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto', fontFamily: 'Inter, sans-serif' }}>
       {/* 1. Page Header */}
       <PageHeader
-        title="PeoplePay360 Design System Showcase"
+        title="HR Nexus Design System Showcase"
         description="Master interactive catalog of production UI primitives and data-display components."
         badge={<StatusBadge status="ACTIVE" size="sm">Design System v1.0</StatusBadge>}
         actions={

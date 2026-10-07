@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 6.5 Attendance & Time-Off Analytics Test Suite
+ * HR Nexus — Phase 6.5 Attendance & Time-Off Analytics Test Suite
  *
  * Verifies all Phase 6.5 frontend analytical calculations:
  * 1. Attendance overview status counts (PRESENT, ABSENT, LATE, OVERTIME, MISSING_CHECKOUT)
@@ -83,9 +83,9 @@ const mockTimeOff: TimeOffRequest[] = [
   { id: 'to-4', employeeId: 'emp-1', employeeName: 'Alice Tech', leaveType: 'Paid Annual Leave', startDate: '2026-07-01', endDate: '2026-07-05', durationDays: 5, reason: 'Summer holiday', status: 'APPROVED' },
 ];
 
-test('PeoplePay360 — Phase 6.5 Attendance & Time-Off Analytics Verification', async () => {
+test('HR Nexus — Phase 6.5 Attendance & Time-Off Analytics Verification', async () => {
   console.log('\n================================================================');
-  console.log('🔍 PEOPLEPAY360 — PHASE 6.5 ATTENDANCE & TIME-OFF VERIFICATION 🔍');
+  console.log('🔍 HR NEXUS — PHASE 6.5 ATTENDANCE & TIME-OFF VERIFICATION 🔍');
   console.log('================================================================\n');
 
   // ── 1. Attendance Analytics: Overview & Status Counts ───────────────────────

@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — UI Presentation Formatters
+ * HR Nexus — UI Presentation Formatters
  *
  * Presentation-only formatters for money and dates.
  * Never modifies or recalculates underlying numeric values.

@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 7.1 Backend JWT Authentication & RBAC Security Audit Suite
+ * HR Nexus — Phase 7.1 Backend JWT Authentication & RBAC Security Audit Suite
  *
  * Automated verification of:
  * 1. Authentication middleware (missing, malformed, expired, invalid signature tokens -> 401)
@@ -331,19 +331,11 @@ test('3. PAYROLL WORKFLOW & RBAC AUTHORIZATION AUDIT', async (t) => {
     assert.strictEqual(res.status, 403);
   });
 
-  await t.test('3.3 HR Manager CANNOT create payruns (403 Forbidden)', async () => {
-    const res = await fetch(`${baseUrl}/api/payroll/payruns/create`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${hrManagerToken}`,
-      },
-      body: JSON.stringify({
-        name: 'Unauthorized Payrun',
-        period: '2026-09',
-      }),
+  await t.test('3.3 HR Manager CAN access payrun list in 3-Tier RBAC (200 OK)', async () => {
+    const res = await fetch(`${baseUrl}/api/payroll/payruns`, {
+      headers: { Authorization: `Bearer ${hrManagerToken}` },
     });
-    assert.strictEqual(res.status, 403);
+    assert.strictEqual(res.status, 200);
   });
 
   await t.test('3.4 Employee CANNOT create payruns (403 Forbidden)', async () => {

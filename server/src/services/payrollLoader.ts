@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Payroll Domain Loading Service
+ * HR Nexus — Payroll Domain Loading Service
  *
  * Sits strictly between the MySQL data-access layer (Repositories) and the pure
  * in-memory Payroll Normalization Layer (payrollNormalizer.ts).

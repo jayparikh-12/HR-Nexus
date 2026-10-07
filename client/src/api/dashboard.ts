@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Dashboard API Module
+ * HR Nexus — Dashboard API Module
  *
  * Centralized typed wrappers for Dashboard metrics and aggregation.
  * Connects directly to backend API infrastructure via apiFetch.

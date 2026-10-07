@@ -1,16 +1,29 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Clock, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { 
+  Clock, 
+  RefreshCw, 
+  Search, 
+  Filter, 
+  ArrowUpDown, 
+  ArrowUp, 
+  ArrowDown, 
+  CheckCircle2, 
+  Calendar,
+  X
+} from 'lucide-react';
 import type { AttendanceRecord } from '../types';
 import { attendanceApi } from '../api/attendance';
 import { ApiError } from '../api/client';
 import { useAuth } from '../context/AuthContext';
-
 import { employeesApi } from '../api/employees';
 
 interface AttendanceProps {
   attendanceRecords?: AttendanceRecord[];
   onAddRecord?: (record: AttendanceRecord) => void;
 }
+
+type SortField = 'date' | 'employeeName' | 'checkIn' | 'checkOut' | 'workedHours' | 'status';
+type SortDirection = 'asc' | 'desc';
 
 export const Attendance: React.FC<AttendanceProps> = ({ onAddRecord }) => {
   const { user } = useAuth();
@@ -19,10 +32,18 @@ export const Attendance: React.FC<AttendanceProps> = ({ onAddRecord }) => {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [isCheckedIn, setIsCheckedIn] = useState<boolean>(false);
+  const [isCompletedToday, setIsCompletedToday] = useState<boolean>(false);
   const [activeRecord, setActiveRecord] = useState<AttendanceRecord | null>(null);
   const [resolvedEmployeeId, setResolvedEmployeeId] = useState<string | undefined>(
     () => user?.employeeId || (user?.id?.startsWith('EMP-') ? user.id : undefined)
   );
+
+  // Filters & Sorting state
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [dateFilter, setDateFilter] = useState<string>('ALL');
+  const [sortField, setSortField] = useState<SortField>('date');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   const todayStr = new Date().toISOString().split('T')[0];
 
@@ -56,6 +77,23 @@ export const Attendance: React.FC<AttendanceProps> = ({ onAddRecord }) => {
   const syncActiveState = useCallback((fetchedRecords: AttendanceRecord[], activeEmpId?: string) => {
     const empId = activeEmpId || resolvedEmployeeId || user?.employeeId || (user?.id?.startsWith('EMP-') ? user.id : undefined);
 
+    const todayRecord = fetchedRecords.find(
+      (r) =>
+        ((empId && r.employeeId === empId) ||
+          (user?.name && r.employeeName?.trim().toLowerCase() === user.name.trim().toLowerCase())) &&
+        r.date === todayStr
+    );
+
+    const completed = Boolean(
+      todayRecord &&
+      todayRecord.checkIn &&
+      todayRecord.checkIn !== '—' &&
+      todayRecord.checkOut &&
+      todayRecord.checkOut !== 'Active' &&
+      todayRecord.checkOut !== '—' &&
+      todayRecord.checkOut.trim() !== ''
+    );
+
     const active = fetchedRecords.find(
       (r) =>
         ((empId && r.employeeId === empId) ||
@@ -66,6 +104,8 @@ export const Attendance: React.FC<AttendanceProps> = ({ onAddRecord }) => {
         (r.checkOut === 'Active' || !r.checkOut || r.checkOut === '—' || r.checkOut.trim() === '')
     );
 
+    setIsCompletedToday(completed);
+
     if (active) {
       setIsCheckedIn(true);
       setActiveRecord(active);
@@ -73,7 +113,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ onAddRecord }) => {
       setIsCheckedIn(false);
       setActiveRecord(null);
     }
-  }, [user, resolvedEmployeeId]);
+  }, [user, resolvedEmployeeId, todayStr]);
 
   const loadAttendance = useCallback(async (activeEmpId?: string) => {
     setLoading(true);
@@ -114,6 +154,11 @@ export const Attendance: React.FC<AttendanceProps> = ({ onAddRecord }) => {
 
   const handleToggleCheck = async () => {
     if (submitting) return;
+
+    if (isCompletedToday) {
+      setError('Daily attendance limit reached: Each employee is restricted to 1 check-in and 1 check-out per calendar day.');
+      return;
+    }
 
     let empId = resolvedEmployeeId || user?.employeeId || (user?.id?.startsWith('EMP-') ? user.id : undefined);
 
@@ -172,6 +217,24 @@ export const Attendance: React.FC<AttendanceProps> = ({ onAddRecord }) => {
     }
   };
 
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ArrowUpDown size={13} style={{ opacity: 0.4 }} />;
+    }
+    return sortDirection === 'asc' 
+      ? <ArrowUp size={13} style={{ color: 'var(--primary)' }} /> 
+      : <ArrowDown size={13} style={{ color: 'var(--primary)' }} />;
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'PRESENT':
@@ -187,6 +250,77 @@ export const Attendance: React.FC<AttendanceProps> = ({ onAddRecord }) => {
     }
   };
 
+  // Filtered & Sorted records
+  const filteredAndSortedRecords = useMemo(() => {
+    return records
+      .filter((rec) => {
+        // Search Term (Employee Name or ID)
+        if (searchTerm.trim()) {
+          const term = searchTerm.toLowerCase();
+          const nameMatch = (rec.employeeName || '').toLowerCase().includes(term);
+          const idMatch = (rec.employeeId || '').toLowerCase().includes(term);
+          if (!nameMatch && !idMatch) return false;
+        }
+
+        // Status Filter
+        if (statusFilter !== 'ALL' && rec.status !== statusFilter) {
+          return false;
+        }
+
+        // Date Filter
+        if (dateFilter === 'TODAY' && rec.date !== todayStr) {
+          return false;
+        }
+        if (dateFilter === 'PAST_7_DAYS') {
+          const recDate = new Date(rec.date);
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+          if (recDate < sevenDaysAgo) return false;
+        }
+        if (dateFilter === 'THIS_MONTH') {
+          const currentMonthPrefix = todayStr.substring(0, 7); // 'YYYY-MM'
+          if (!rec.date.startsWith(currentMonthPrefix)) return false;
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        let valA: string | number = '';
+        let valB: string | number = '';
+
+        switch (sortField) {
+          case 'date':
+            valA = a.date || '';
+            valB = b.date || '';
+            break;
+          case 'employeeName':
+            valA = (a.employeeName || a.employeeId || '').toLowerCase();
+            valB = (b.employeeName || b.employeeId || '').toLowerCase();
+            break;
+          case 'checkIn':
+            valA = a.checkIn || '';
+            valB = b.checkIn || '';
+            break;
+          case 'checkOut':
+            valA = a.checkOut || '';
+            valB = b.checkOut || '';
+            break;
+          case 'workedHours':
+            valA = a.workedHours || 0;
+            valB = b.workedHours || 0;
+            break;
+          case 'status':
+            valA = a.status || '';
+            valB = b.status || '';
+            break;
+        }
+
+        if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+        if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+  }, [records, searchTerm, statusFilter, dateFilter, sortField, sortDirection, todayStr]);
+
   // Metrics summary
   const hasTodayRecords = records.some((r) => r.date === todayStr);
   const targetDataset = hasTodayRecords ? records.filter((r) => r.date === todayStr) : records;
@@ -196,6 +330,14 @@ export const Attendance: React.FC<AttendanceProps> = ({ onAddRecord }) => {
   const overtimeCount = targetDataset.filter((r) => r.status === 'OVERTIME').length;
   const absentCount = targetDataset.filter((r) => r.status === 'ABSENT').length;
 
+  const isFilterActive = searchTerm !== '' || statusFilter !== 'ALL' || dateFilter !== 'ALL';
+
+  const resetFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('ALL');
+    setDateFilter('ALL');
+  };
+
   return (
     <div>
       <div className="page-header">
@@ -204,7 +346,7 @@ export const Attendance: React.FC<AttendanceProps> = ({ onAddRecord }) => {
           <p className="page-desc">Daily check-in and check-out logs feeding into the payroll overtime and absence engine.</p>
         </div>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <button
             className="btn btn-secondary btn-sm"
             onClick={() => loadAttendance()}
@@ -218,21 +360,58 @@ export const Attendance: React.FC<AttendanceProps> = ({ onAddRecord }) => {
 
           {/* Live Check-in / Out Widget */}
           <button
-            className={`btn ${isCheckedIn ? 'btn-danger' : 'btn-primary'}`}
+            className={`btn ${isCompletedToday ? 'btn-secondary' : isCheckedIn ? 'btn-danger' : 'btn-primary'}`}
             onClick={handleToggleCheck}
-            disabled={submitting}
+            disabled={submitting || isCompletedToday}
+            style={isCompletedToday ? { opacity: 0.85, cursor: 'not-allowed' } : undefined}
+            title={
+              isCompletedToday 
+                ? 'Daily limit reached: 1 check-in and 1 check-out allowed per day.' 
+                : isCheckedIn 
+                ? 'Clock out to finish today\'s shift.' 
+                : 'Clock in to begin shift.'
+            }
           >
-            <Clock size={15} />
-            <span>
-              {submitting
-                ? 'Processing...'
-                : isCheckedIn
-                ? 'Clock Out (Active Session)'
-                : 'Self Check-In Now'}
-            </span>
+            {isCompletedToday ? (
+              <>
+                <CheckCircle2 size={15} color="#10b981" />
+                <span>Shift Completed (1/1 Limit Reached)</span>
+              </>
+            ) : (
+              <>
+                <Clock size={15} />
+                <span>
+                  {submitting
+                    ? 'Processing...'
+                    : isCheckedIn
+                    ? 'Clock Out (Active Session)'
+                    : 'Self Check-In Now'}
+                </span>
+              </>
+            )}
           </button>
         </div>
       </div>
+
+      {isCompletedToday && (
+        <div style={{ 
+          marginBottom: '16px', 
+          padding: '10px 14px', 
+          background: '#ecfdf5', 
+          border: '1px solid #a7f3d0', 
+          borderRadius: '8px', 
+          fontSize: '13px', 
+          color: '#065f46', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '8px' 
+        }}>
+          <CheckCircle2 size={16} color="#059669" />
+          <span>
+            <strong>Daily Limit Enforced:</strong> You have completed your shift check-in and check-out for today ({todayStr}). Each employee is restricted to at most 1 check-in and 1 check-out per calendar day.
+          </span>
+        </div>
+      )}
 
       {error && (
         <div style={{ marginBottom: '16px', padding: '10px 14px', background: '#fee2e2', border: '1px solid #f87171', borderRadius: '8px', fontSize: '13px', color: '#991b1b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -283,17 +462,115 @@ export const Attendance: React.FC<AttendanceProps> = ({ onAddRecord }) => {
         </div>
       </div>
 
+      {/* Filter and Controls Toolbar */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          {/* Search Box */}
+          <div className="search-box" style={{ width: '250px' }}>
+            <Search size={15} color="var(--slate-400)" />
+            <input 
+              type="text"
+              placeholder="Search employee or ID…"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {/* Status Dropdown */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Filter size={14} color="var(--slate-400)" />
+            <select
+              aria-label="Filter attendance by status"
+              className="form-input"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              style={{ padding: '6px 10px', fontSize: '13px', minWidth: '130px', height: 'auto', fontWeight: 500 }}
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="PRESENT">Present</option>
+              <option value="LATE">Late</option>
+              <option value="OVERTIME">Overtime</option>
+              <option value="ABSENT">Absent</option>
+            </select>
+          </div>
+
+          {/* Date Filter Dropdown */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Calendar size={14} color="var(--slate-400)" />
+            <select
+              aria-label="Filter attendance by timeframe"
+              className="form-input"
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+              style={{ padding: '6px 10px', fontSize: '13px', minWidth: '130px', height: 'auto', fontWeight: 500 }}
+            >
+              <option value="ALL">All Dates</option>
+              <option value="TODAY">Today Only</option>
+              <option value="PAST_7_DAYS">Past 7 Days</option>
+              <option value="THIS_MONTH">This Month</option>
+            </select>
+          </div>
+
+          {/* Clear Filters */}
+          {isFilterActive && (
+            <button
+              onClick={resetFilters}
+              className="btn btn-secondary btn-sm"
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 10px', fontSize: '12px' }}
+              title="Reset all filters"
+            >
+              <X size={13} />
+              <span>Clear</span>
+            </button>
+          )}
+        </div>
+
+        <div style={{ fontSize: '13px', color: 'var(--slate-500)' }}>
+          Showing <strong>{filteredAndSortedRecords.length}</strong> {filteredAndSortedRecords.length === 1 ? 'record' : 'records'}
+        </div>
+      </div>
+
       {/* Attendance Table */}
       <div className="table-container">
         <table>
           <thead>
             <tr>
-              <th>Employee</th>
-              <th>Date</th>
-              <th>Clock In</th>
-              <th>Clock Out</th>
-              <th>Worked Hours</th>
-              <th>Compliance Status</th>
+              <th onClick={() => handleSort('employeeName')} style={{ cursor: 'pointer', userSelect: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>Employee</span>
+                  {getSortIcon('employeeName')}
+                </div>
+              </th>
+              <th onClick={() => handleSort('date')} style={{ cursor: 'pointer', userSelect: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>Date</span>
+                  {getSortIcon('date')}
+                </div>
+              </th>
+              <th onClick={() => handleSort('checkIn')} style={{ cursor: 'pointer', userSelect: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>Clock In</span>
+                  {getSortIcon('checkIn')}
+                </div>
+              </th>
+              <th onClick={() => handleSort('checkOut')} style={{ cursor: 'pointer', userSelect: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>Clock Out</span>
+                  {getSortIcon('checkOut')}
+                </div>
+              </th>
+              <th onClick={() => handleSort('workedHours')} style={{ cursor: 'pointer', userSelect: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>Worked Hours</span>
+                  {getSortIcon('workedHours')}
+                </div>
+              </th>
+              <th onClick={() => handleSort('status')} style={{ cursor: 'pointer', userSelect: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>Compliance Status</span>
+                  {getSortIcon('status')}
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -303,14 +580,16 @@ export const Attendance: React.FC<AttendanceProps> = ({ onAddRecord }) => {
                   Loading attendance records from database...
                 </td>
               </tr>
-            ) : records.length === 0 ? (
+            ) : filteredAndSortedRecords.length === 0 ? (
               <tr>
                 <td colSpan={6} style={{ textAlign: 'center', padding: '40px 0', color: 'var(--slate-400)' }}>
-                  No attendance records found in database. Click "Self Check-In Now" to clock in.
+                  {isFilterActive 
+                    ? 'No attendance records match your filter criteria.' 
+                    : 'No attendance records found in database. Click "Self Check-In Now" to clock in.'}
                 </td>
               </tr>
             ) : (
-              records.map((rec) => (
+              filteredAndSortedRecords.map((rec) => (
                 <tr key={rec.id}>
                   <td style={{ fontWeight: 600 }}>{rec.employeeName}</td>
                   <td style={{ color: 'var(--slate-500)' }}>{rec.date}</td>

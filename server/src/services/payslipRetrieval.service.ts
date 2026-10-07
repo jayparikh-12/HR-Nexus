@@ -1,5 +1,5 @@
 /**
- * Payslip Retrieval Service — PeoplePay360
+ * Payslip Retrieval Service — HR Nexus
  *
  * Exposes persisted historical payroll calculation snapshots as clean, secure Payslip APIs.
  *

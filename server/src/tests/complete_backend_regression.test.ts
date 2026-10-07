@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Phase 7.5 Complete Backend & API Regression Testing Suite
+ * HR Nexus — Phase 7.5 Complete Backend & API Regression Testing Suite
  *
  * Comprehensive end-to-end regression testing across all 19 system domains:
  * 1. Server Startup & Health Check (/api/health)
@@ -104,7 +104,7 @@ test.before(async () => {
     const dbResult = await testDatabaseConnection();
     res.json({
       status: 'ok',
-      service: 'PeoplePay360 Server',
+      service: 'HR Nexus Server',
       timestamp: new Date().toISOString(),
       database: {
         connected: dbResult.connected,
@@ -176,7 +176,7 @@ test('1. SERVER STARTUP & HEALTH REGRESSION', async (t) => {
     assert.strictEqual(res.status, 200);
     const body = await res.json();
     assert.strictEqual(body.status, 'ok');
-    assert.strictEqual(body.service, 'PeoplePay360 Server');
+    assert.strictEqual(body.service, 'HR Nexus Server');
     assert.strictEqual(body.database.connected, true);
   });
 });
@@ -271,11 +271,11 @@ test('3. RBAC ROLE PERMISSIONS REGRESSION', async (t) => {
     assert.strictEqual(dshRes.status, 403);
   });
 
-  await t.test('3.3 HR Manager cannot manage payruns (403 Forbidden)', async () => {
+  await t.test('3.3 HR Manager can access payruns in 3-Tier RBAC (200 OK)', async () => {
     const res = await fetch(`${baseUrl}/api/payroll/payruns`, {
       headers: { Authorization: `Bearer ${hrManagerToken}` },
     });
-    assert.strictEqual(res.status, 403);
+    assert.strictEqual(res.status, 200);
   });
 });
 
@@ -387,6 +387,7 @@ test('5. ATTENDANCE & TIME-OFF API REGRESSION', async (t) => {
   let createdTimeOffId = '';
 
   await t.test('5.1 Attendance check-in succeeds with valid parameters (201 Created)', async () => {
+    await executeQuery("DELETE FROM attendance_records WHERE employee_id = 'EMP-001' AND date = '2026-09-02'");
     const res = await fetch(`${baseUrl}/api/attendance/check-in`, {
       method: 'POST',
       headers: {

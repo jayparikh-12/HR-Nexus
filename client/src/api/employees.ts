@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Employee API Module
+ * HR Nexus — Employee API Module
  *
  * Centralized typed wrappers for /api/employees endpoints.
  * Uses the shared apiFetch abstraction which automatically attaches

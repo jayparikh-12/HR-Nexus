@@ -1,6 +1,6 @@
-// Shared Domain Models for PeoplePay360
+// Shared Domain Models for HR Nexus
 
-export type UserRole = 'Employee' | 'HR Manager' | 'HR Payroll User' | 'HR Payroll Manager' | 'Admin';
+export type UserRole = 'Employee' | 'HR Manager' | 'Admin';
 
 export interface AuthUser {
   id: string;
@@ -14,6 +14,7 @@ export type Gender = 'MALE' | 'FEMALE' | 'NON_BINARY' | 'OTHER' | 'PREFER_NOT_TO
 
 export interface Employee {
   id: string;
+  empCode?: string;
   name: string;
   email: string;
   department: string;

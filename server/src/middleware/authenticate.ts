@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Authentication Middleware
+ * HR Nexus — Authentication Middleware
  *
  * Validates the Bearer token from the Authorization header and attaches the
  * decoded user payload to `req.user` for downstream middleware and route handlers.

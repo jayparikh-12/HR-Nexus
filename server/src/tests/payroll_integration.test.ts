@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — PHASE 4 INTEGRATION CHECKPOINT VERIFICATION SUITE
+ * HR Nexus — PHASE 4 INTEGRATION CHECKPOINT VERIFICATION SUITE
  *
  * Integrates and verifies Jay + Pavan Phase 4 implementations:
  * - Jay: payroll-engine foundation, normalization, PayrollCalculationInput architecture,

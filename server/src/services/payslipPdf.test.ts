@@ -26,7 +26,7 @@
 
 import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { executeQuery } from '../config/database.js';
+import { pool, executeQuery } from '../config/database.js';
 import {
   PayslipRetrievalService,
   PayslipNotFoundError,
@@ -432,5 +432,11 @@ describe('PHASE 5.7 — Payslip PDF Generation & Download', () => {
 
   it('20. Existing Phase 4 deterministic engine tests pass', () => {
     assert.strictEqual(typeof PayrollEngine.compute, 'function');
+  });
+
+  after(async () => {
+    await executeQuery('DELETE FROM payslips WHERE payrun_id = ?', [payrunId]);
+    await executeQuery('DELETE FROM payruns WHERE id = ?', [payrunId]);
+    await pool.end();
   });
 });

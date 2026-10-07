@@ -97,11 +97,11 @@ export const ErrorPage: React.FC<ErrorPageProps> = ({
             boxShadow: '0 4px 12px rgba(15, 118, 110, 0.3)',
           }}
         >
-          P
+          N
         </div>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <span style={{ fontSize: '18px', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text-main, #0f172a)' }}>
-            PeoplePay360
+            HR Nexus
           </span>
           <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--primary, #0f766e)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
             Enterprise HR & Payroll
@@ -289,7 +289,7 @@ export const ErrorPage: React.FC<ErrorPageProps> = ({
           textAlign: 'center',
         }}
       >
-        <span>Need assistance? Contact your PeoplePay360 System Administrator.</span>
+        <span>Need assistance? Contact your HR Nexus System Administrator.</span>
       </div>
     </div>
   );

@@ -3,8 +3,6 @@ import type { UserRole } from '../types';
 export type CanonicalRole =
   | 'EMPLOYEE'
   | 'HR_MANAGER'
-  | 'HR_PAYROLL_USER'
-  | 'HR_PAYROLL_MANAGER'
   | 'ADMIN';
 
 export type Permission =
@@ -19,9 +17,9 @@ export type Permission =
   | 'contracts:view'
   | 'contracts:manage'
   | 'attendance:manage'
+  | 'attendance:review'
   | 'time_off:approve'
   // Payroll Operations
-  | 'attendance:review'
   | 'payrun:draft'
   | 'payrun:validate'
   | 'payrun:mark_paid'
@@ -37,9 +35,8 @@ export function normalizeRole(role: string | null | undefined): CanonicalRole {
   const clean = role.trim().toUpperCase().replace(/\s+/g, '_');
 
   if (clean.includes('ADMIN')) return 'ADMIN';
-  if (clean.includes('PAYROLL_MANAGER') || clean === 'HR_PAYROLL_MANAGER') return 'HR_PAYROLL_MANAGER';
-  if (clean.includes('PAYROLL_USER') || clean === 'HR_PAYROLL_USER') return 'HR_PAYROLL_USER';
-  if (clean.includes('HR_MANAGER') || clean === 'HR_MANAGER') return 'HR_MANAGER';
+  if (clean.includes('HR') || clean.includes('MANAGER') || clean.includes('PAYROLL')) return 'HR_MANAGER';
+  if (clean.includes('EMPLOYEE')) return 'EMPLOYEE';
   return 'EMPLOYEE';
 }
 
@@ -49,12 +46,8 @@ export function normalizeRole(role: string | null | undefined): CanonicalRole {
 export function toDisplayRole(role: string | null | undefined): UserRole {
   const canonical = normalizeRole(role);
   switch (canonical) {
-    case 'HR_PAYROLL_MANAGER':
-      return 'HR Payroll Manager';
     case 'HR_MANAGER':
       return 'HR Manager';
-    case 'HR_PAYROLL_USER':
-      return 'HR Payroll User';
     case 'ADMIN':
       return 'Admin';
     case 'EMPLOYEE':
@@ -81,33 +74,6 @@ export const ROLE_PERMISSIONS: Record<CanonicalRole, readonly Permission[]> = {
     'time_off:own',
     'payslip:own',
     // HR Management
-    'employees:view',
-    'employees:manage',
-    'contracts:view',
-    'contracts:manage',
-    'attendance:manage',
-    'time_off:approve',
-  ],
-
-  HR_PAYROLL_USER: [
-    // Own self-service
-    'dashboard:own',
-    'attendance:own',
-    'time_off:own',
-    'payslip:own',
-    // Payroll operations
-    'attendance:review',
-    'payrun:draft',
-    'payslip:generate',
-  ],
-
-  HR_PAYROLL_MANAGER: [
-    // Own self-service
-    'dashboard:own',
-    'attendance:own',
-    'time_off:own',
-    'payslip:own',
-    // HR & Operational access
     'employees:view',
     'employees:manage',
     'contracts:view',
@@ -177,7 +143,6 @@ export function canAccess(
       return hasPermission(canonical, 'employees:view') || hasPermission(canonical, 'contracts:view');
 
     case 'attendance':
-      // Employee accesses own attendance; HR/Payroll manage or review
       return true;
 
     case 'attendance:manage':
@@ -185,7 +150,7 @@ export function canAccess(
 
     case 'time-off':
     case 'timeoff':
-      return true; // Employees view own, HR manages
+      return true;
 
     case 'time-off:approve':
     case 'timeoff:approve':
@@ -202,7 +167,7 @@ export function canAccess(
       return hasPermission(canonical, 'payrun:mark_paid');
 
     case 'payslips':
-      return true; // All roles can view relevant payslips
+      return true;
 
     default:
       return false;

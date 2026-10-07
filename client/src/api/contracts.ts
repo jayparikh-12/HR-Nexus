@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Contract API Module
+ * HR Nexus — Contract API Module
  *
  * Centralized typed wrappers for /api/contracts endpoints.
  * Uses the shared apiFetch abstraction which automatically attaches

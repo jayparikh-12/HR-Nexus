@@ -1,6 +1,6 @@
-# PeoplePay360 Backend Server
+# HR Nexus Backend Server
 
-Express + TypeScript API for PeoplePay360.
+Express + TypeScript API for HR Nexus.
 
 ## What it covers
 

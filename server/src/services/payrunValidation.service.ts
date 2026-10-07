@@ -1,5 +1,5 @@
 /**
- * Payrun Validation Service — PeoplePay360
+ * Payrun Validation Service — HR Nexus
  *
  * Sits strictly between the API route layer and the data-access layer:
  *

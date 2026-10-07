@@ -876,7 +876,7 @@ router.get(
       const isSelf = user?.employeeId === snapshot.employeeId;
       const isPrivileged =
         user?.role &&
-        ['ADMIN', 'HR_PAYROLL_MANAGER', 'HR_PAYROLL_USER', 'Admin', 'HR Payroll Manager'].some((r) =>
+        ['ADMIN', 'HR_MANAGER', 'Admin', 'HR Manager'].some((r) =>
           user.role.toUpperCase().includes(r.toUpperCase())
         );
 

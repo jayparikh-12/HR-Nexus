@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Dashboard Backend Aggregation Test Suite (Phase 6.1)
+ * HR Nexus — Dashboard Backend Aggregation Test Suite (Phase 6.1)
  *
  * Verifies all requirements:
  * 1. Dashboard endpoint requires authentication (401 on missing/invalid token)
@@ -77,7 +77,7 @@ function createMockReqRes(authHeader?: string, user?: any) {
 
 async function runDashboardTests() {
   console.log('\n================================================================');
-  console.log('🔍 PEOPLEPAY360 — PHASE 6.1 DASHBOARD AGGREGATION VERIFICATION 🔍');
+  console.log('🔍 HR NEXUS — PHASE 6.1 DASHBOARD AGGREGATION VERIFICATION 🔍');
   console.log('================================================================\n');
 
   try {

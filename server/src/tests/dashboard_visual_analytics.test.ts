@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Dashboard Payroll Visual Analytics Verification Suite (Phase 6.3)
+ * HR Nexus — Dashboard Payroll Visual Analytics Verification Suite (Phase 6.3)
  *
  * Verifies all Phase 6.3 backend requirements:
  * 1. PAYROLL TREND AGGREGATION across available cycles with real database values
@@ -44,9 +44,9 @@ function fail(testName: string, err: unknown) {
   console.error(`  ❌ [FAIL] ${testName}:`, err instanceof Error ? err.message : err);
 }
 
-test('PeoplePay360 — Phase 6.3 Visual Analytics Backend Verification Suite', async () => {
+test('HR Nexus — Phase 6.3 Visual Analytics Backend Verification Suite', async () => {
   console.log('\n================================================================');
-  console.log('🔍 PEOPLEPAY360 — PHASE 6.3 VISUAL ANALYTICS BACKEND VERIFICATION 🔍');
+  console.log('🔍 HR NEXUS — PHASE 6.3 VISUAL ANALYTICS BACKEND VERIFICATION 🔍');
   console.log('================================================================\n');
 
   try {

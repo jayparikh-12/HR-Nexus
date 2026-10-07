@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Play, 
   Check, 
@@ -7,7 +7,12 @@ import {
   Download, 
   X,
   AlertCircle,
-  Loader2
+  Loader2,
+  Search,
+  Filter,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react';
 import type { Payrun, PayslipItem, Employee } from '../types';
 import { payrollApi } from '../api/payroll';
@@ -45,8 +50,8 @@ export const Payruns: React.FC<PayrunsProps> = ({
   onSelectPayrun
 }) => {
   const { displayRole } = useAuth();
-  const canValidateAndPay = displayRole === 'Admin' || displayRole === 'HR Payroll Manager';
-  const canCreatePayrun = displayRole === 'Admin' || displayRole === 'HR Payroll Manager' || displayRole === 'HR Payroll User';
+  const canValidateAndPay = displayRole === 'Admin' || displayRole === 'HR Manager';
+  const canCreatePayrun = displayRole === 'Admin' || displayRole === 'HR Manager';
 
   // Determine initial active payrun: preserve activePayrunId in same session if valid, otherwise smart default.
   // Returns undefined when no payruns exist — the UI will show an empty state.
@@ -66,12 +71,120 @@ export const Payruns: React.FC<PayrunsProps> = ({
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Dynamic current cycle defaults
+  const currentCycleDefaults = useMemo(() => {
+    const now = new Date();
+    const monthName = now.toLocaleString('en-US', { month: 'long' });
+    const year = now.getFullYear();
+    const lastDay = new Date(year, now.getMonth() + 1, 0).getDate();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    return {
+      name: `${monthName} ${year} Regular Cycle`,
+      period: `${year}-${mm}-01 to ${year}-${mm}-${lastDay}`,
+    };
+  }, []);
+
   // Wizard controlled form state (Step 1)
-  const [wizardName, setWizardName] = useState('October 2026 Regular Cycle');
-  const [wizardPeriod, setWizardPeriod] = useState('2026-10-01 to 2026-10-31');
+  const [wizardName, setWizardName] = useState(currentCycleDefaults.name);
+  const [wizardPeriod, setWizardPeriod] = useState(currentCycleDefaults.period);
   const [wizardSalaryStructure, setWizardSalaryStructure] = useState('Standard Full-Time Tech');
   const [wizardLoading, setWizardLoading] = useState(false);
   const [wizardError, setWizardError] = useState<string | null>(null);
+
+  // Batch table filter and sorting state
+  const [batchSearch, setBatchSearch] = useState<string>('');
+  const [batchDeptFilter, setBatchDeptFilter] = useState<string>('ALL');
+  const [batchStatusFilter, setBatchStatusFilter] = useState<string>('ALL');
+  const [batchSortField, setBatchSortField] = useState<'employeeName' | 'department' | 'gross' | 'deductions' | 'net' | 'status'>('employeeName');
+  const [batchSortDirection, setBatchSortDirection] = useState<'asc' | 'desc'>('asc');
+
+  // Distinct departments in current active payrun
+  const batchDepartments = useMemo(() => {
+    if (!activePayrun?.payslips) return [];
+    const depts = new Set<string>();
+    activePayrun.payslips.forEach((s) => {
+      if (s.department) depts.add(s.department);
+    });
+    return Array.from(depts).sort();
+  }, [activePayrun?.payslips]);
+
+  // Filtered and sorted payslip batch
+  const filteredAndSortedSlips = useMemo(() => {
+    if (!activePayrun?.payslips) return [];
+    return activePayrun.payslips
+      .filter((slip) => {
+        if (batchSearch.trim()) {
+          const term = batchSearch.toLowerCase();
+          const nameMatch = (slip.employeeName || '').toLowerCase().includes(term);
+          const deptMatch = (slip.department || '').toLowerCase().includes(term);
+          const warnMatch = (slip.warning || '').toLowerCase().includes(term);
+          if (!nameMatch && !deptMatch && !warnMatch) return false;
+        }
+
+        if (batchDeptFilter !== 'ALL' && slip.department !== batchDeptFilter) {
+          return false;
+        }
+
+        if (batchStatusFilter !== 'ALL' && slip.status !== batchStatusFilter) {
+          return false;
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        let valA: string | number = '';
+        let valB: string | number = '';
+
+        switch (batchSortField) {
+          case 'employeeName':
+            valA = (a.employeeName || '').toLowerCase();
+            valB = (b.employeeName || '').toLowerCase();
+            break;
+          case 'department':
+            valA = (a.department || '').toLowerCase();
+            valB = (b.department || '').toLowerCase();
+            break;
+          case 'gross':
+            valA = a.gross;
+            valB = b.gross;
+            break;
+          case 'deductions':
+            valA = a.tax + a.otherDeductions;
+            valB = b.tax + b.otherDeductions;
+            break;
+          case 'net':
+            valA = a.net;
+            valB = b.net;
+            break;
+          case 'status':
+            valA = a.status;
+            valB = b.status;
+            break;
+        }
+
+        if (valA < valB) return batchSortDirection === 'asc' ? -1 : 1;
+        if (valA > valB) return batchSortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+  }, [activePayrun?.payslips, batchSearch, batchDeptFilter, batchStatusFilter, batchSortField, batchSortDirection]);
+
+  const handleBatchSort = (field: 'employeeName' | 'department' | 'gross' | 'deductions' | 'net' | 'status') => {
+    if (batchSortField === field) {
+      setBatchSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setBatchSortField(field);
+      setBatchSortDirection(field === 'gross' || field === 'net' || field === 'deductions' ? 'desc' : 'asc');
+    }
+  };
+
+  const getBatchSortIcon = (field: 'employeeName' | 'department' | 'gross' | 'deductions' | 'net' | 'status') => {
+    if (batchSortField !== field) {
+      return <ArrowUpDown size={12} style={{ opacity: 0.4 }} />;
+    }
+    return batchSortDirection === 'asc' 
+      ? <ArrowUp size={12} style={{ color: 'var(--primary)' }} /> 
+      : <ArrowDown size={12} style={{ color: 'var(--primary)' }} />;
+  };
 
   // Sync activePayrun with authoritative backend status on mount / when activePayrunId changes.
   // Always trusts the backend as source of truth for status.
@@ -508,47 +621,152 @@ export const Payruns: React.FC<PayrunsProps> = ({
         </div>
       </div>
 
+      {/* Batch Table Search & Filters */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <div className="search-box" style={{ width: '220px' }}>
+            <Search size={14} color="var(--slate-400)" />
+            <input 
+              type="text" 
+              placeholder="Search employee or warning…" 
+              value={batchSearch} 
+              onChange={(e) => setBatchSearch(e.target.value)} 
+            />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Filter size={13} color="var(--slate-400)" />
+            <select
+              aria-label="Filter payslips by department"
+              className="form-input"
+              value={batchDeptFilter}
+              onChange={(e) => setBatchDeptFilter(e.target.value)}
+              style={{ padding: '5px 10px', fontSize: '12.5px', height: 'auto', minWidth: '130px' }}
+            >
+              <option value="ALL">All Departments</option>
+              {batchDepartments.map((d) => (
+                <option key={d} value={d}>{d}</option>
+              ))}
+            </select>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <select
+              aria-label="Filter payslips by status"
+              className="form-input"
+              value={batchStatusFilter}
+              onChange={(e) => setBatchStatusFilter(e.target.value)}
+              style={{ padding: '5px 10px', fontSize: '12.5px', height: 'auto', minWidth: '115px' }}
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="PAID">PAID</option>
+              <option value="VALIDATED">VALIDATED</option>
+              <option value="COMPUTED">COMPUTED</option>
+              <option value="DRAFT">DRAFT</option>
+            </select>
+          </div>
+
+          {(batchSearch !== '' || batchDeptFilter !== 'ALL' || batchStatusFilter !== 'ALL') && (
+            <button
+              onClick={() => {
+                setBatchSearch('');
+                setBatchDeptFilter('ALL');
+                setBatchStatusFilter('ALL');
+              }}
+              className="btn btn-secondary btn-sm"
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '5px 9px', fontSize: '12px' }}
+              title="Reset filters"
+            >
+              <X size={12} />
+              <span>Clear</span>
+            </button>
+          )}
+        </div>
+
+        <div style={{ fontSize: '12px', color: 'var(--slate-500)' }}>
+          Showing <strong>{filteredAndSortedSlips.length}</strong> of <strong>{activePayrun.payslips.length}</strong> payslips
+        </div>
+      </div>
+
       {/* Payslip Batch Table */}
       <div className="table-container">
         <table>
           <thead>
             <tr>
-              <th>Employee</th>
-              <th>Department</th>
-              <th>Gross Salary</th>
-              <th>Deductions</th>
-              <th>Net Salary</th>
-              <th>Status</th>
+              <th onClick={() => handleBatchSort('employeeName')} style={{ cursor: 'pointer', userSelect: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span>Employee</span>
+                  {getBatchSortIcon('employeeName')}
+                </div>
+              </th>
+              <th onClick={() => handleBatchSort('department')} style={{ cursor: 'pointer', userSelect: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span>Department</span>
+                  {getBatchSortIcon('department')}
+                </div>
+              </th>
+              <th onClick={() => handleBatchSort('gross')} style={{ cursor: 'pointer', userSelect: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span>Gross Salary</span>
+                  {getBatchSortIcon('gross')}
+                </div>
+              </th>
+              <th onClick={() => handleBatchSort('deductions')} style={{ cursor: 'pointer', userSelect: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span>Deductions</span>
+                  {getBatchSortIcon('deductions')}
+                </div>
+              </th>
+              <th onClick={() => handleBatchSort('net')} style={{ cursor: 'pointer', userSelect: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span>Net Salary</span>
+                  {getBatchSortIcon('net')}
+                </div>
+              </th>
+              <th onClick={() => handleBatchSort('status')} style={{ cursor: 'pointer', userSelect: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span>Status</span>
+                  {getBatchSortIcon('status')}
+                </div>
+              </th>
               <th>Voucher</th>
             </tr>
           </thead>
           <tbody>
-            {activePayrun.payslips.map((slip) => (
-              <tr key={slip.id}>
-                <td>
-                  <div style={{ fontWeight: 600 }}>{slip.employeeName}</div>
-                  {slip.warning && (
-                    <div style={{ fontSize: '11px', color: '#b45309', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                      <AlertCircle size={10} /> {slip.warning}
-                    </div>
-                  )}
-                </td>
-                <td>{slip.department}</td>
-                <td style={{ fontWeight: 600 }}>₹{slip.gross.toLocaleString('en-IN')}.00</td>
-                <td style={{ color: '#be123c' }}>-₹{(slip.tax + slip.otherDeductions).toLocaleString('en-IN')}.00</td>
-                <td style={{ fontWeight: 700, color: 'var(--primary)' }}>₹{slip.net.toLocaleString('en-IN')}.00</td>
-                <td>
-                  <span className={`badge ${slip.status === 'PAID' ? 'badge-success' : slip.status === 'VALIDATED' ? 'badge-info' : 'badge-warning'}`}>
-                    {slip.status}
-                  </span>
-                </td>
-                <td>
-                  <button className="btn btn-secondary btn-sm" onClick={() => setSelectedPayslip(slip)}>
-                    <FileText size={12} /> View Payslip
-                  </button>
+            {filteredAndSortedSlips.length === 0 ? (
+              <tr>
+                <td colSpan={7} style={{ textAlign: 'center', padding: '30px 0', color: 'var(--slate-400)' }}>
+                  No payslips in this cycle match the filter criteria.
                 </td>
               </tr>
-            ))}
+            ) : (
+              filteredAndSortedSlips.map((slip) => (
+                <tr key={slip.id}>
+                  <td>
+                    <div style={{ fontWeight: 600 }}>{slip.employeeName}</div>
+                    {slip.warning && (
+                      <div style={{ fontSize: '11px', color: '#b45309', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                        <AlertCircle size={10} /> {slip.warning}
+                      </div>
+                    )}
+                  </td>
+                  <td>{slip.department}</td>
+                  <td style={{ fontWeight: 600 }}>₹{slip.gross.toLocaleString('en-IN')}.00</td>
+                  <td style={{ color: '#be123c' }}>-₹{(slip.tax + slip.otherDeductions).toLocaleString('en-IN')}.00</td>
+                  <td style={{ fontWeight: 700, color: 'var(--primary)' }}>₹{slip.net.toLocaleString('en-IN')}.00</td>
+                  <td>
+                    <span className={`badge ${slip.status === 'PAID' ? 'badge-success' : slip.status === 'VALIDATED' ? 'badge-info' : 'badge-warning'}`}>
+                      {slip.status}
+                    </span>
+                  </td>
+                  <td>
+                    <button className="btn btn-secondary btn-sm" onClick={() => setSelectedPayslip(slip)}>
+                      <FileText size={12} /> View Payslip
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

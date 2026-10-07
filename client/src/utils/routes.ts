@@ -20,14 +20,22 @@ export const TAB_TO_PATH: Record<string, string> = Object.fromEntries(
 
 /**
  * Authoritative RBAC check for navigation tabs and frontend route protection.
+ * Configured strictly for 3 roles: Admin, HR Manager, and Employee.
  */
 export const isTabAllowed = (tab: string, role: UserRole): boolean => {
   if (role === 'Admin') return true;
   if (role === 'HR Manager') {
-    return ['dashboard', 'employees', 'contracts', 'schedules', 'attendance', 'time-off', 'payslips'].includes(tab);
-  }
-  if (role === 'HR Payroll Manager' || role === 'HR Payroll User') {
-    return ['dashboard', 'employees', 'contracts', 'attendance', 'payruns', 'payslips'].includes(tab);
+    return [
+      'dashboard',
+      'employees',
+      'contracts',
+      'schedules',
+      'attendance',
+      'time-off',
+      'payruns',
+      'payslips',
+      'salary-rules',
+    ].includes(tab);
   }
   if (role === 'Employee') {
     return ['dashboard', 'attendance', 'time-off', 'payslips'].includes(tab);
@@ -37,24 +45,10 @@ export const isTabAllowed = (tab: string, role: UserRole): boolean => {
 
 /**
  * Resolves the primary workspace landing route for a user based on their active role.
- * Avoids hardcoding /dashboard if role lacks dashboard access.
  */
 export const getDefaultWorkspacePath = (role?: UserRole | string | null, isAuthenticated?: boolean): string => {
   if (isAuthenticated === false || !role) {
     return '/login';
   }
-  if (isTabAllowed('dashboard', role as UserRole)) {
-    return '/dashboard';
-  }
-  if (isTabAllowed('attendance', role as UserRole)) {
-    return '/attendance';
-  }
-  if (isTabAllowed('employees', role as UserRole)) {
-    return '/employees';
-  }
-  if (isTabAllowed('payslips', role as UserRole)) {
-    return '/payslips';
-  }
   return '/dashboard';
 };
-

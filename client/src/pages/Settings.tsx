@@ -39,8 +39,8 @@ interface SystemPreferences {
 }
 
 const DEFAULT_PREFERENCES: SystemPreferences = {
-  organizationName: 'PeoplePay360 Global Technologies Pvt. Ltd.',
-  orgCode: 'PP360-CORP-2026',
+  organizationName: 'HR Nexus Global Technologies Pvt. Ltd.',
+  orgCode: 'HRNEXUS-CORP-2026',
   defaultCurrency: 'INR (₹)',
   timezone: 'Asia/Kolkata (IST, UTC+05:30)',
   autoOvertimeCalc: true,
@@ -73,35 +73,29 @@ const SYSTEM_ROLES_CATALOG: Array<{
     email: 'sarah@company.com',
     employeeId: 'EMP-006',
     badgeType: 'success',
-    scope: 'People & Workforce Operations',
-    permissions: ['Employee Directory Management', 'Contracts Creation & Edit', 'Working Schedules', 'Time-Off Approvals', 'Attendance Tracking'],
-  },
-  {
-    role: 'HR Payroll Manager',
-    name: 'Elena Rostova',
-    email: 'elena@company.com',
-    employeeId: 'EMP-004',
-    badgeType: 'warning',
-    scope: 'Payroll Controller & Financial Approval',
-    permissions: ['Payrun Computation & Validation', 'Payrun Payment Execution', 'Payslip Vouchers & PDF Engine', 'Employee Read Access'],
-  },
-  {
-    role: 'HR Payroll User',
-    name: 'Alex Rivera',
-    email: 'alex@company.com',
-    employeeId: 'EMP-003',
-    badgeType: 'info',
-    scope: 'Payroll Specialist & Verification',
-    permissions: ['Payrun Drafting & Generation', 'Attendance Cross-Verification', 'Payslips Overview', 'Employee Read Access'],
+    scope: 'People, Workforce & Payroll Operations',
+    permissions: [
+      'Employee Directory Management',
+      'Contracts Creation & Edit',
+      'Working Schedules',
+      'Time-Off Approvals',
+      'Attendance Tracking',
+      'Payrun Computation & Validation',
+      'Payslip Generation & Records',
+    ],
   },
   {
     role: 'Employee',
     name: 'John Doe',
-    email: 'john.doe@company.com',
+    email: 'john@company.com',
     employeeId: 'EMP-001',
     badgeType: 'info',
     scope: 'Self-Service Portal Access',
-    permissions: ['Self Clock-In / Clock-Out', 'Personal Leave Requests', 'Personal Payslip History & PDF Download'],
+    permissions: [
+      'Live Punch Clock (In / Out)',
+      'Personal Leave Requests',
+      'Personal Payslip History & PDF Download',
+    ],
   },
 ];
 
@@ -112,7 +106,7 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigateTab }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'shortcuts' | 'rbac' | 'account'>('general');
   const [preferences, setPreferences] = useState<SystemPreferences>(() => {
     try {
-      const saved = localStorage.getItem('peoplepay360_system_preferences');
+      const saved = localStorage.getItem('hrnexus_system_preferences');
       return saved ? JSON.parse(saved) : DEFAULT_PREFERENCES;
     } catch {
       return DEFAULT_PREFERENCES;
@@ -149,7 +143,7 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigateTab }) => {
   const handleSavePreferences = (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      localStorage.setItem('peoplepay360_system_preferences', JSON.stringify(preferences));
+      localStorage.setItem('hrnexus_system_preferences', JSON.stringify(preferences));
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3500);
     } catch (err) {
@@ -159,7 +153,7 @@ export const Settings: React.FC<SettingsProps> = ({ onNavigateTab }) => {
 
   const handleResetDefaults = () => {
     setPreferences(DEFAULT_PREFERENCES);
-    localStorage.removeItem('peoplepay360_system_preferences');
+    localStorage.removeItem('hrnexus_system_preferences');
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 3500);
   };

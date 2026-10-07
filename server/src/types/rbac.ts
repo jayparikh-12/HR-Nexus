@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Centralized RBAC Types
+ * HR Nexus — Centralized RBAC Types
  *
  * Single source of truth for role and permission types.
  * Import from here; never scatter raw string literals in route files.
@@ -10,9 +10,7 @@
 // ---------------------------------------------------------------------------
 export const ROLES = {
   ADMIN: 'ADMIN',
-  HR_PAYROLL_MANAGER: 'HR_PAYROLL_MANAGER',
   HR_MANAGER: 'HR_MANAGER',
-  HR_PAYROLL_USER: 'HR_PAYROLL_USER',
   EMPLOYEE: 'EMPLOYEE',
 } as const;
 

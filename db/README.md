@@ -1,6 +1,6 @@
-# PeoplePay360 Database
+# HR Nexus Database
 
-MySQL schema and seed data for the PeoplePay360 HR and payroll platform.
+MySQL schema and seed data for the HR Nexus HR and payroll platform.
 
 ## Files
 

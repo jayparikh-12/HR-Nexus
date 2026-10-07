@@ -1,5 +1,5 @@
 /**
- * PeoplePay360 — Salary Structure API Module
+ * HR Nexus — Salary Structure API Module
  *
  * Centralized typed wrappers for /api/salary-structures endpoints.
  * Automatically attaches Authorization: Bearer <token> via apiFetch.
